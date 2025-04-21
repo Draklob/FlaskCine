@@ -1,0 +1,15 @@
+[
+  {"nombre": "ABC El Saler", "direccion": "Centro Comercial El Saler", "telefono": "3950592", "precio_base": 8.00 },
+  {"nombre": "Acteon", "direccion": "Gran Via Marqués del Turia, 26", "telefono": "3954084", "precio_base": 8.00},
+  {"nombre": "Artis", "direccion": "Russafa, 20", "telefono": "3940178", "precio_base": 8.00},
+  {"nombre": "Aula 7", "direccion": "G. Sanmartín, 15", "telefono": "3940415", "precio_base": 8.00},
+  {"nombre": "Cines Nuevo Centro", "direccion": "Avd. Pío XII, 2", "telefono": "3485477", "precio_base": 8.00},
+  {"nombre": "Cine Primavera II", "direccion": "Calle Primavera, 45","telefono": "3941234", "precio_base": 8.00},
+  {"nombre": "Cine Lumiere II", "direccion": "Plaza Lumiére, 12", "telefono": "3945678", "precio_base": 8.00},
+  {"nombre": "Cinestar Centro", "direccion": "Calle Gran Via, 12", "telefono": "912 345 678", "precio_base": 8.00},
+  {"nombre": "Cine Metropolis", "direccion": "Avenida de América, 45", "telefono": "913 456 789", "precio_base": 8.00},
+  {"nombre": "Cine Aurora", "direccion": "Plaza Mayor, 8", "telefono": "914 567 890", "precio_base": 8.00},
+  {"nombre": "Cine Lumiere III", "direccion": "Plaza Lumiére, 24", "telefono": "915 678 901", "precio_base": 8.00},
+  {"nombre": "Cine Rex", "direccion": "Calle Alcalá, 100", "telefono": "916 789 012", "precio_base": 8.00},
+  {"nombre": "Cine Primavera III", "direccion": "Calle Primavera, 98", "telefono": "917 890 123", "precio_base": 8.00}
+]

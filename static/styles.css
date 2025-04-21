@@ -1,0 +1,116 @@
+:root {
+    --titulos-color: #3b413c
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.contenedor-cine, .contenedor-main{
+    background: #6d2d1d;
+    height: 100vh; /* Altura completa de la ventana de la pantalla*/
+    width: 100%;
+}
+
+.contenedor-cine {
+    min-width: 200px;
+}
+
+.contenedor-main{
+    min-width: 75%;
+}
+/* Menú lateral */
+.sidebar {
+    background-color: #43696d;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+}
+
+.cines-lista-cabecera{
+    background-color: #6d6565;
+    max-height: 100%;
+    height: 60px;
+}
+
+.titulos {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--titulos-color);
+    text-align: center;
+}
+
+.nav-contenedor{
+    text-align: center;
+    overflow-y: hidden; /* Scroll vertical*/
+
+}
+
+.cines-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.cines-lista li a {
+    display: block;
+}
+
+.cine-item {
+    border-radius: 4px;
+    transition: background-color 0.2s ease; /* Transición suave */
+    cursor: pointer;
+}
+
+.cine-item:hover {
+    background-color: #e5e5e5; /* Gris claro en hover */
+}
+
+.cine-item.active {
+    background-color: #d1d1d1; /* Gris más oscuro para seleccionado */
+    font-weight: bold;
+}
+
+/* Área central */
+.contenedor-main {
+    padding: 20px;
+}
+
+.detalles-container {
+    background-color: #ffffff; /* Blanco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px; /* Ancho máximo */
+    transition: opacity 0.3s ease; /* Transición para desvanecimiento */
+}
+
+.detalles-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333; /* Gris oscuro */
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.detalles-container p {
+    font-size: 16px;
+    color: #666; /* Gris medio */
+    margin-bottom: 10px;
+}
+
+.detalles-container p strong {
+    color: #333; /* Gris oscuro para etiquetas */
+}
+
+.peliculas-lista-item {
+    background-color: #ffffff; /* Blanco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+    padding: 20px;
+    border-radius: 8px;
+    list-style: none;
+}
+
+/* Estilo para errores */
+.error h2 {
+    color: #d32f2f; /* Rojo para errores */
+}

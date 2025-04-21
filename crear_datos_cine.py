@@ -17,8 +17,13 @@ def crear_base_datos():
         try:
             with connection.cursor() as cursor:
                 # Crear la base de datos si no existe
-                cursor.execute("CREATE DATABASE IF NOT EXISTS cine_db")
-                print("Base de datos 'cine' creada correctamente.")
+                cursor.execute("SHOW DATABASES LIKE 'cine_db'")
+                result = cursor.fetchone()
+                if result is None:
+                    cursor.execute("CREATE DATABASE IF NOT EXISTS cine_db")
+                    print("Base de datos 'cine' creada correctamente.")
+                else:
+                    print("Base de datos 'cine' ya existe.")
         finally:
             connection.close()
 
@@ -75,28 +80,29 @@ def crear_tablas():
 
         cursor = conexion.cursor()
         # SCRIPT SQL COMPLETO
+        # Si ya existen las tablas, no las vuelve a crear, simplemente da el salto a la siguiente secuencia SQL
         script_sql = """
             -- Crea la tabla PELICULAS
             CREATE TABLE IF NOT EXISTS peliculas(
             id_pelicula INT AUTO_INCREMENT PRIMARY KEY,
-            titulo VARCHAR(100) NOT NULL,
-            anho INT NOT NULL,
+            titulo VARCHAR(100) UNIQUE NOT NULL,
+            año INT NOT NULL,
             duracion INT NOT NULL,
             genero VARCHAR(40) NOT NULL,
             director VARCHAR(40) NOT NULL,
-            actores VARCHAR(120) NOT NULL,
-            sinopsis VARCHAR(200) NOT NULL,
+            actores VARCHAR(180),
+            sinopsis TEXT,
             clasificacion VARCHAR(10) NOT NULL,
-            poster_url VARCHAR(200) NOT NULL
+            poster_url VARCHAR(250)
             );
             
             -- Crea la tabla CINE
             CREATE TABLE IF NOT EXISTS cines(
             id_cine INT AUTO_INCREMENT PRIMARY KEY,
             nombre VARCHAR(100) NOT NULL,
-            direccion VARCHAR(200) NOT NULL,
-            ciudad VARCHAR(50) NOT NULL,
-            telefono VARCHAR(20) NOT NULL
+            direccion VARCHAR(250) NOT NULL,
+            telefono VARCHAR(20) NOT NULL,
+            precio_base DECIMAL (3,2) NOT NULL
             );
 
             -- Crea la tabla SALAS
@@ -114,7 +120,6 @@ def crear_tablas():
             id_pelicula INT,
             id_sala INT,
             fecha_hora DATETIME NOT NULL,
-            precio DECIMAL (2,2) NOT NULL,
             FOREIGN KEY (id_pelicula) REFERENCES peliculas (id_pelicula),
             FOREIGN KEY (id_sala) REFERENCES salas (id_sala)
             );
@@ -123,9 +128,11 @@ def crear_tablas():
             CREATE TABLE IF NOT EXISTS usuarios(
             id_usuario INT AUTO_INCREMENT PRIMARY KEY,
             nombre VARCHAR(100) NOT NULL,
-            email VARCHAR(100) NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
             password VARCHAR(100) NOT NULL,
-            telefono VARCHAR(20) NOT NULL
+            telefono VARCHAR(20) DEFAULT NULL,
+            fecha_nacimiento DATETIME DEFAULT NULL,
+            es_estudiante BOOLEAN DEFAULT FALSE
             );
             
             -- Crea la tabla Reservas
@@ -155,13 +162,32 @@ def crear_tablas():
             FOREIGN KEY (id_reserva) REFERENCES reservas (id_reserva),
             FOREIGN KEY (id_asiento) REFERENCES asientos (id_asiento)
             );
+            
+            -- Crea la tabla descuentos
+            CREATE TABLE IF NOT EXISTS descuentos(
+            id_descuento INT AUTO_INCREMENT PRIMARY KEY,
+            nombre VARCHAR(70) NOT NULL,
+            edad_minima INT DEFAULT NULL,
+            edad_maxima INT DEFAULT NULL,
+            requiere_estudiante BOOLEAN DEFAULT FALSE
+            );
+            
+            -- Crea la tabla descuentos_cine
+            CREATE TABLE IF NOT EXISTS descuentos_cine(
+            id_descuento_cine INT AUTO_INCREMENT PRIMARY KEY,
+            id_cine INT,
+            id_descuento INT,
+            porcentaje DECIMAL(3,3) NOT NULL, -- 0.30 para un 30% de descuento
+            dia_semana INT CHECK (dia_semana BETWEEN 1 AND 7 OR dia_semana IS NULL),
+            FOREIGN KEY (id_cine) REFERENCES cines (id_cine),
+            FOREIGN KEY (id_descuento) REFERENCES descuentos (id_descuento)
+            );
             """
         # TERMINA LA CREACION DE LAS TABLAS
 
         # Ejecutamos el script separando cada sentencia
         for sentencia in script_sql.split(';'):
             if sentencia.strip(): # Que elimine cualquier espacio sobrante
-                print(f"pintando sentencia {sentencia}")
                 cursor.execute(sentencia)
 
         # Confirmamos y guardamos los cambios en la base de datos
@@ -176,4 +202,7 @@ def crear_tablas():
             cursor.close()
         if 'conexion' in locals():
             conexion.close()
-            print("Conexión cerrada.")
+            print("Cerrando conexion con la base de datos.")
+
+def insertar_datos():
+    pass

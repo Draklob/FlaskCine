@@ -1,0 +1,59 @@
+{
+  "descuentos": [
+    { "nombre": "Espectador", "edad_minima": null, "edad_maxima": null, "requiere_estudiante": false },
+    { "nombre": "Jubilado", "edad_minima": 65, "edad_maxima": null, "requiere_estudiante": false },
+    { "nombre": "Niño", "edad_minima": 0, "edad_maxima": 12, "requiere_estudiante": false},
+    { "nombre": "Estudiante", "edad_minima": 12, "edad_maxima": 29, "requiere_estudiante": true },
+    { "nombre": "Festivos", "edad_minima": null, "edad_maxima": null, "requiere_estudiante": false }
+  ],
+  "descuentos_cine": [
+    { "id_cine": 1, "id_descuento": 1, "porcentaje" : 0.375, "dia_semana": 3 },
+    { "id_cine": 1, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 1 },
+    { "id_cine": 1, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 2 },
+    { "id_cine": 1, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 4 },
+    { "id_cine": 1, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 5 },
+    { "id_cine": 1, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 1, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+    { "id_cine": 1, "id_descuento": 5, "porcentaje" : 1.50, "dia_semana": null },
+
+    { "id_cine": 2, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+
+    { "id_cine": 3, "id_descuento": 1, "porcentaje" : 0.375, "dia_semana": 3 },
+    { "id_cine": 3, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+
+    { "id_cine": 4, "id_descuento": 1, "porcentaje" : 0.375, "dia_semana": 3 },
+    { "id_cine": 4, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 1 },
+    { "id_cine": 4, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 2 },
+    { "id_cine": 4, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 4 },
+    { "id_cine": 4, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": 5 },
+    { "id_cine": 4, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 4, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 5, "id_descuento": 1, "porcentaje" : 0.375, "dia_semana": 1 },
+    { "id_cine": 5, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 5, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 6, "id_descuento": 1, "porcentaje" : 0.375, "dia_semana": 2 },
+    { "id_cine": 6, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 6, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 7, "id_descuento": 1, "porcentaje" : 0.375, "dia_semana": 4 },
+    { "id_cine": 7, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 7, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 8, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 8, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 9, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": null },
+    { "id_cine": 9, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 9, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 10, "id_descuento": 2, "porcentaje" : 0.375, "dia_semana": null },
+    { "id_cine": 10, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+    { "id_cine": 10, "id_descuento": 4, "porcentaje" : 0.40, "dia_semana": null },
+
+    { "id_cine": 11, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null },
+
+    { "id_cine": 12, "id_descuento": 3, "porcentaje" : 0.50, "dia_semana": null }
+  ]
+}

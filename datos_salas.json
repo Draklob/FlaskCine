@@ -1,0 +1,59 @@
+[
+  {"id_cine": "1", "numero_sala": "1", "capacidad": "120"},
+  {"id_cine": "1", "numero_sala": "2", "capacidad": "100"},
+  {"id_cine": "1", "numero_sala": "3", "capacidad": "84"},
+  {"id_cine": "1", "numero_sala": "4", "capacidad": "72"},
+
+  {"id_cine": "2", "numero_sala": "1", "capacidad": "110"},
+  {"id_cine": "2", "numero_sala": "2", "capacidad": "100"},
+  {"id_cine": "2", "numero_sala": "3", "capacidad": "60"},
+
+  {"id_cine": "3", "numero_sala": "1", "capacidad": "64"},
+  {"id_cine": "3", "numero_sala": "2", "capacidad": "50"},
+
+  {"id_cine": "4", "numero_sala": "1", "capacidad": "64"},
+  {"id_cine": "4", "numero_sala": "2", "capacidad": "50"},
+
+  {"id_cine": "5", "numero_sala": "1", "capacidad": "100"},
+  {"id_cine": "5", "numero_sala": "2", "capacidad": "92"},
+  {"id_cine": "5", "numero_sala": "3", "capacidad": "92"},
+  {"id_cine": "5", "numero_sala": "4", "capacidad": "80"},
+
+  {"id_cine": "6", "numero_sala": "1", "capacidad": "98"},
+  {"id_cine": "6", "numero_sala": "2", "capacidad": "92"},
+  {"id_cine": "6", "numero_sala": "3", "capacidad": "62"},
+
+  {"id_cine": "7", "numero_sala": "1", "capacidad": "92"},
+  {"id_cine": "7", "numero_sala": "2", "capacidad": "72"},
+
+  {"id_cine": "8", "numero_sala": "1", "capacidad": "82"},
+  {"id_cine": "8", "numero_sala": "2", "capacidad": "82"},
+  {"id_cine": "8", "numero_sala": "3", "capacidad": "74"},
+  {"id_cine": "8", "numero_sala": "4", "capacidad": "74"},
+
+  {"id_cine": "9", "numero_sala": "1", "capacidad": "110"},
+  {"id_cine": "9", "numero_sala": "2", "capacidad": "100"},
+  {"id_cine": "9", "numero_sala": "3", "capacidad": "84"},
+  {"id_cine": "9", "numero_sala": "4", "capacidad": "84"},
+
+  {"id_cine": "10", "numero_sala": "1", "capacidad": "108"},
+  {"id_cine": "10", "numero_sala": "2", "capacidad": "108"},
+  {"id_cine": "10", "numero_sala": "3", "capacidad": "90"},
+  {"id_cine": "10", "numero_sala": "4", "capacidad": "90"},
+
+  {"id_cine": "11", "numero_sala": "1", "capacidad": "120"},
+  {"id_cine": "11", "numero_sala": "2", "capacidad": "110"},
+  {"id_cine": "11", "numero_sala": "3", "capacidad": "100"},
+  {"id_cine": "11", "numero_sala": "4", "capacidad": "100"},
+
+  {"id_cine": "12", "numero_sala": "1", "capacidad": "95"},
+  {"id_cine": "12", "numero_sala": "2", "capacidad": "95"},
+  {"id_cine": "12", "numero_sala": "3", "capacidad": "80"},
+  {"id_cine": "12", "numero_sala": "4", "capacidad": "80"},
+
+  {"id_cine": "13", "numero_sala": "1", "capacidad": "110"},
+  {"id_cine": "13", "numero_sala": "2", "capacidad": "110"},
+  {"id_cine": "13", "numero_sala": "3", "capacidad": "98"},
+  {"id_cine": "13", "numero_sala": "4", "capacidad": "98"},
+  {"id_cine": "13", "numero_sala": "5", "capacidad": "84"}
+]
