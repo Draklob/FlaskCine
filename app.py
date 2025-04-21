@@ -8,7 +8,7 @@ def iniciar_base_datos():
     print("\n=== Iniciando configuración de la base de datos ===")
     crear_base_datos()
     crear_tablas()
-    #agregar_datos_cine()
+    agregar_datos_cine()
     #listar_base_datos()
 app = Flask(__name__)
 CORS(app)

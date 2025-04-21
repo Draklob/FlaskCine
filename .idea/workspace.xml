@@ -4,21 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Subiendo primera actualizacion.">
-      <change afterPath="$PROJECT_DIR$/agregar_datos_cine.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/datos_cines.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/datos_funciones.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/datos_peliculas.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/datos_salas.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/precios_descuentos.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/FlaskCine.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FlaskCine.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0635a0ed-52a7-446e-85d5-1b95c4be6f29.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0635a0ed-52a7-446e-85d5-1b95c4be6f29.xml" afterDir="false" />
+    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Subiendo primeros cambios en el html y css, muestra los cines y los detalles de cada uno.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agregar_datos_cine.py" beforeDir="false" afterPath="$PROJECT_DIR$/agregar_datos_cine.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crear_datos_cine.py" beforeDir="false" afterPath="$PROJECT_DIR$/crear_datos_cine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datos_peliculas.json" beforeDir="false" afterPath="$PROJECT_DIR$/datos_peliculas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datos_salas.json" beforeDir="false" afterPath="$PROJECT_DIR$/datos_salas.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +39,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -182,7 +179,8 @@
       <workItem from="1744727884590" duration="5392000" />
       <workItem from="1744814559685" duration="14280000" />
       <workItem from="1744830456109" duration="68000" />
-      <workItem from="1745246978064" duration="8644000" />
+      <workItem from="1745246978064" duration="10827000" />
+      <workItem from="1745258022872" duration="3554000" />
     </task>
     <task id="LOCAL-00001" summary="Subiendo primera actualizacion.">
       <option name="closed" value="true" />
@@ -200,7 +198,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744226714751</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Subiendo primeros cambios en el html y css, muestra los cines y los detalles de cada uno.">
+      <option name="closed" value="true" />
+      <created>1745255871814</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1745255871814</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,7 +217,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -219,11 +237,12 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Subiendo primera actualizacion." />
-    <option name="LAST_COMMIT_MESSAGE" value="Subiendo primera actualizacion." />
+    <MESSAGE value="Subiendo primeros cambios en el html y css, muestra los cines y los detalles de cada uno." />
+    <option name="LAST_COMMIT_MESSAGE" value="Subiendo primeros cambios en el html y css, muestra los cines y los detalles de cada uno." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FlaskCine$FlaskCine.coverage" NAME="FlaskCine Coverage Results" MODIFIED="1744218040854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1745248703445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1745258900487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/FlaskCine$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1744654092730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

@@ -108,9 +108,9 @@ def crear_tablas():
             -- Crea la tabla SALAS
             CREATE TABLE IF NOT EXISTS salas(
             id_sala INT AUTO_INCREMENT PRIMARY KEY,
-            id_cine INT,
-            num_sala INT NOT NULL,
+            numero VARCHAR(50) NOT NULL,
             capacidad INT NOT NULL,
+            id_cine INT NOT NULL,
             FOREIGN KEY (id_cine) REFERENCES cines (id_cine)
             );
             
