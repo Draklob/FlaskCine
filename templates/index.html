@@ -28,18 +28,13 @@
                     <p>Haz clic en un cine de la lista para ver sus detalles.</p>
                 </div>
             </section>
-            <div id="detalles" class="row">
-                <section class="peliculas col">
+            <div id="contenedor-peliculas-cine" class="row">
+                <section class="peliculas-cine col">
                     <div id="detalles-peliculas" class="">
                         <h2 class="titulos">Peliculas</h2>
-                        <ul class="peliculas-lista">
-                            <li class="peliculas-lista-item">
-                                <p>EOODS</p>
-                            </li>
-                            <li class="peliculas-lista-item">
-                                <p>EOODS</p>
-                            </li>
-                        </ul>
+                        <nav class="nav-peliculas">
+                            <ul id="peliculas-lista" class="peliculas-lista"></ul>
+                        </nav>
                     </div>
                 </section>
                 <section class="peliculas-info col">
@@ -53,7 +48,9 @@
         // Estado de la aplicación
         const appState = {
             cines: [],
-            selectedCine: null
+            selectedCine: null,
+            peliculas: [],
+            selectedPelicula: null,
         };
 
         // Cargar cines desde el backend
@@ -80,20 +77,33 @@
                 li.addEventListener('click', () => {
                     appState.selectedCine = cine;
                     renderizarMenu();
-                    renderizarDetalles();
+                    renderizarDetallesCine();
+                    cargarPeliculas();
                 });
                 lista.appendChild(li);
             });
         }
 
+        // Carga las pelis cuando elegimos el cine
+        async function cargarPeliculas() {
+            try{
+                const response = await fetch(`/cines/${appState.selectedCine.id_cine}/peliculas`);
+                if (!response.ok) throw new Error('Error al cargar las peliculas');
+                appState.peliculas = await response.json();
+                renderizarPeliculas();
+            } catch (error) {
+                mostrarError('No se pudieron cargar las peliculas.');
+                console.error(error);
+            }
+        }
+
         // Renderizar los detalles del cine
-        function renderizarDetalles() {
+        function renderizarDetallesCine() {
             const detalles = document.getElementById('cine-detalles');
             detalles.style.opacity = '0';
             setTimeout(() => {
                 if (appState.selectedCine) {
                     const precioBase = appState.selectedCine.precio_base != null ? parseFloat(appState.selectedCine.precio_base) : null;
-                    console.log('Precio base = ', precioBase);
                     detalles.innerHTML = `
                         <h2 class="text-2xl font-bold mb-4 text-gray-800">${sanitize(appState.selectedCine.nombre)}</h2>
                         <p class="text-gray-600 mb-2"><strong>Dirección:</strong> ${sanitize(appState.selectedCine.direccion || 'No disponible')}</p>
@@ -108,6 +118,36 @@
                 }
                 detalles.style.opacity = '1';
             }, 300);
+        }
+
+        // Renderizar detalles de las peliculas en el cine elegido
+        function renderizarPeliculas(){
+            console.log(appState.peliculas);
+            const pelis = document.getElementById('peliculas-lista');
+            pelis.innerHTML = '';
+            pelis.style.opacity = '0';
+            setTimeout(() => {
+                if (appState.selectedCine) {
+                    appState.peliculas.forEach(peli => {
+                        const li = document.createElement('li');
+                        li.className = "peli-item p-2 rounded";
+                        li.textContent = peli.titulo;
+                        li.addEventListener('click', () => {
+                            appState.selectedPelicula = peli;
+                            {#cargarInfoPeli#}
+                            {#renderizarInfoPeli#}
+                            console.log(appState.selectedPelicula);
+                        });
+                        pelis.appendChild(li);
+                    })
+                } else {
+                    pelis.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-4 text-gray-800">Selecciona un cine</h2>
+                        <p class="text-gray-600">Haz clic en un cine de la lista para ver sus detalles.</p>
+                    `;
+                }
+                pelis.style.opacity = '1';
+            }, 350);
         }
 
         // Mostrar mensaje de error

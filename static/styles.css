@@ -102,7 +102,11 @@ body {
     color: #333; /* Gris oscuro para etiquetas */
 }
 
-.peliculas-lista-item {
+.peliculas-lista{
+    list-style: none;
+}
+
+.peli-item {
     background-color: #ffffff; /* Blanco */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
     padding: 20px;
