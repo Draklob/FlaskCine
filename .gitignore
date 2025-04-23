@@ -1,0 +1,22 @@
+# PyCharm IDE
+.idea/
+*.iml
+modules.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/datasources.local.xml
+.idea/tasks.xml
+.idea/shelf/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Archivos de caché y compilación
+__pycache__/
+*.py[cod]
+
+# Archivos de configuración sensible
+*.env
+*.secret

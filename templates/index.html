@@ -16,7 +16,9 @@
                 <h2 class="titulos">Cines</h2>
             </div>
             <nav class="nav-contenedor">
-                <ul id="cines-lista" class="cines-lista"></ul>
+                <div class="cines-lista-contenedor">
+                    <ul id="cines-lista" class="cines-lista"></ul>
+                </div>
             </nav>
         </aside>
 
@@ -31,12 +33,11 @@
             <div id="contenedor-peliculas-cine" class="row">
                 <section class="peliculas-cine col">
                     <div id="detalles-peliculas" class="">
-                        <h2 class="titulos">Cartelera</h2>
                         <div id="peliculas-lista" class="grid-peliculas"></div>
                     </div>
                 </section>
                 <section class="peliculas-info col">
-                    <h2 class="titulos">Info</h2>
+                    <div id="detalles-peli-info" class="detalles-container mx-auto oculto"></div>
                 </section>
             </div>
         </main>
@@ -45,15 +46,23 @@
     <script>
         // Estado de la aplicación
         const appState = {
+            estaCargando: false,
             cines: [],
             selectedCine: null,
             peliculas: [],
             selectedPelicula: null,
+            infoPelicula: null,
         };
+
+        // Controlador para el await cuando usamos fetch
+        let controladorFetch;
 
         // Cargar cines desde el backend
         async function cargarCines() {
+            if(appState.estaCargando) return;
+
             try {
+                appState.estaCargando = true;
                 const response = await fetch('/cines');
                 if (!response.ok) throw new Error('Error al cargar cines');
                 appState.cines = await response.json();
@@ -62,6 +71,7 @@
                 mostrarError('No se pudieron cargar los cines.');
                 console.error(error);
             }
+            appState.estaCargando = false;
         }
 
         // Renderizar el menú de cines
@@ -84,7 +94,11 @@
 
         // Carga las pelis cuando elegimos el cine
         async function cargarPeliculas() {
+            if(appState.estaCargando) return;
+
             try{
+                appState.estaCargando = true;
+
                 const response = await fetch(`/cines/${appState.selectedCine.id_cine}/peliculas`);
                 if (!response.ok) throw new Error('Error al cargar las peliculas');
                 appState.peliculas = await response.json();
@@ -97,6 +111,9 @@
 
         // Renderizar los detalles del cine
         function renderizarDetallesCine() {
+            document.getElementById('detalles-peli-info').classList.remove('visible-block');
+            document.getElementById('detalles-peli-info').classList.add('oculto');
+
             const detalles = document.getElementById('cine-detalles');
             detalles.style.opacity = '0';
             setTimeout(() => {
@@ -116,6 +133,8 @@
                     `;
                 }
                 detalles.style.opacity = '1';
+                appState.estaCargando = false;
+
             }, 300);
         }
 
@@ -128,16 +147,23 @@
             setTimeout(() => {
                 if (appState.selectedCine) {
                     appState.peliculas.forEach(peli => {
+                        const sesiones = peli.horarios.split(';').map(sesion => sesion.trim());
+
+                        console.log(sesiones);
                         const item = document.createElement('div');
                         item.className = 'pelicula-item'
+                        html = sesiones.map(sesion => `
+                            <div class="sesion-badge">
+                                <span class="sala">${sesion}</span>
+                            </div>
+                         `).join('');
                         if( peli.poster_url && validarURL(peli.poster_url)) {
                             item.innerHTML = `
                                 <img src="${peli.poster_url}" alt="${peli.titulo}" onerror="this.parentNode.innerHTML = '<h3>${escapeHtml(peli.titulo)}</h3>';
                                     this.nextElementSibling.style.display='block'">
-                                <div class="pelicula-titulo" style="display: none;">
-                                      ${peli.titulo}
-                                </div>
-                            `;
+                                <div class="sesiones-overlay"></div>
+                            ` + html;
+
                         } else {
                             // Mostrar solo título en texto
                             item.innerHTML = `
@@ -148,12 +174,11 @@
                         }
                         item.addEventListener('click', () => {
                             appState.selectedPelicula = peli;
-                            {#cargarInfoPeli#}
-                            {#renderizarInfoPeli#}
-                            console.log(appState.selectedPelicula);
+                            cargarInfoPelicula();
                         });
                         contenedor.appendChild(item);
                     })
+
                 } else {
                     contenedor.innerHTML = `
                         <h2 class="text-2xl font-bold mb-4 text-gray-800">Selecciona una pelicula.</h2>
@@ -162,6 +187,55 @@
                 }
                 contenedor.style.opacity = '1';
             }, 350);
+        }
+
+        // Muestra la informacion de la pelicula
+        async function cargarInfoPelicula() {
+            try {
+                appState.infoPelicula = null; // Limpiar datos anteriores
+
+                // 2. Esperar la respuesta
+                const response = await fetch(`/api/info_peli/${appState.selectedPelicula.id_pelicula}`);
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+
+                appState.infoPelicula = await response.json();
+                // Renderizar los datos
+                renderizarInfoPelicula();
+
+            } catch (err) {
+                mostrarError("No se pudo mostrar la información de la película.");
+                console.error("Error completo:", err);
+            }
+        }
+
+        function  renderizarInfoPelicula() {
+            const info_peli = document.getElementById('detalles-peli-info');
+            info_peli.classList.remove('oculto');
+            info_peli.classList.add('visible-block');
+            info_peli.style.opacity = '0';
+            setTimeout(() => {
+                if( appState.selectedPelicula ) {
+                    info_peli.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">${sanitize(appState.infoPelicula.titulo)}</h2>
+                    <p class="text-gray-600 mb-2"><strong>Año:</strong> ${sanitize(appState.infoPelicula.año || 'No disponible')}</p>
+                    <p class="text-gray-600 mb-2"><strong>Duración:</strong> ${sanitize(appState.infoPelicula.duracion)} min</p>
+                    <p class="text-gray-600 mb-2"><strong>Genero:</strong> ${sanitize(appState.infoPelicula.genero)}</p>
+                    <p class="text-gray-600 mb-2"><strong>Director:</strong> ${sanitize(appState.infoPelicula.director)}</p>
+                    ${appState.infoPelicula.actores ? `<p class="text-gray-600 mb-2"><strong>Actores:</strong> ${sanitize(appState.infoPelicula.actores)}</p>` : ''}
+                    <p class="text-gray-600 mb-2"><strong>Sinopsis:</strong> ${sanitize(appState.infoPelicula.sinopsis)}</p>
+                    <p class="text-gray-600 mb-2"><strong>Clasificación:</strong> ${sanitize(appState.infoPelicula.clasificacion)}</p>
+                    `;
+                } else {
+                    info_peli.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-4 text-gray-800">Selecciona una peli</h2>
+                        <p class="text-gray-600">Haz clic en una de las portadas de las peliculas.</p>
+                    `;
+                }
+                info_peli.style.opacity = '1';
+            }, 300);
         }
 
         // Validar URLs

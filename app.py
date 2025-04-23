@@ -13,6 +13,22 @@ def iniciar_base_datos():
 app = Flask(__name__)
 CORS(app)
 
+@app.route("/api/info_peli/<int:id_pelicula>")
+def info_peli(id_pelicula):
+    try:
+        conexion = conectar_base_datos_cine()
+        cursor = conexion.cursor(pymysql.cursors.DictCursor)
+        print(f"Buscando la pelicula {id_pelicula}")
+        # Buscamos la pelicula y nos devuelva toda la informacion sobre ella.
+        cursor.execute('SELECT * FROM peliculas WHERE id_pelicula = %s', (id_pelicula,))
+        pelicula = cursor.fetchone()
+        cursor.close()
+        conexion.close()
+        return jsonify(pelicula)
+
+    except pymysql.Error as error:
+        return jsonify({'error': str(error)}), 500
+
 @app.route('/cines', methods=['GET'])
 def get_cines():
     iniciar_base_datos()
@@ -45,7 +61,7 @@ def get_peliculas(id_cine):
         cursor.execute('''
             SELECT
                 p.id_pelicula, p.titulo, p.poster_url,
-                GROUP_CONCAT(CONCAT(s.numero, ' a las ', TIME_FORMAT(f.fecha_hora,'%%H:%%i')) SEPARATOR '; ') AS horarios
+                GROUP_CONCAT(CONCAT(s.numero, ' a las ', TIME_FORMAT(f.fecha_hora,'%%H:%%i')) ORDER BY f.fecha_hora ASC SEPARATOR '; ') AS horarios
             FROM
                 cines c
                 INNER JOIN salas s ON c.id_cine = s.id_cine
@@ -57,7 +73,7 @@ def get_peliculas(id_cine):
             GROUP BY
                 p.id_pelicula, p.titulo, p.duracion
             ORDER BY 
-                `p`.`id_pelicula` ASC;
+                p.id_pelicula, MIN(f.fecha_hora);
         ''', (id_cine, '2025-04-14'))
         peliculas = cursor.fetchall()
 
