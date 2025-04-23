@@ -22,8 +22,12 @@ def get_cines():
         # Cogemos los datos de los cines de la base de datos
         cursor.execute('SELECT id_cine, nombre, direccion, telefono, precio_base FROM cines')
         cines = cursor.fetchall()
-        # Buscamos el numero de salas que tiene cada cine
 
+        # Buscamos el numero de salas que tiene cada cine y lo guardamos en la info de cada cine
+        for i,cine in enumerate(cines):
+            cursor.execute('SELECT COUNT(*) AS salas FROM cines c INNER JOIN salas s ON c.id_cine = s.id_cine WHERE c.id_cine = %s', (cine['id_cine'],))
+            num_salas = cursor.fetchone()['salas']
+            cines[i]['salas'] = num_salas
 
         cursor.close()
         conexion.close()
@@ -40,7 +44,7 @@ def get_peliculas(id_cine):
         print("Buscando peliculas")
         cursor.execute('''
             SELECT
-                p.id_pelicula, p.titulo,
+                p.id_pelicula, p.titulo, p.poster_url,
                 GROUP_CONCAT(CONCAT(s.numero, ' a las ', TIME_FORMAT(f.fecha_hora,'%%H:%%i')) SEPARATOR '; ') AS horarios
             FROM
                 cines c
@@ -56,7 +60,6 @@ def get_peliculas(id_cine):
                 `p`.`id_pelicula` ASC;
         ''', (id_cine, '2025-04-14'))
         peliculas = cursor.fetchall()
-        print(peliculas)
 
         cursor.close()
         conexion.close()

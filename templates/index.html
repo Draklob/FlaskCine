@@ -31,10 +31,8 @@
             <div id="contenedor-peliculas-cine" class="row">
                 <section class="peliculas-cine col">
                     <div id="detalles-peliculas" class="">
-                        <h2 class="titulos">Peliculas</h2>
-                        <nav class="nav-peliculas">
-                            <ul id="peliculas-lista" class="peliculas-lista"></ul>
-                        </nav>
+                        <h2 class="titulos">Cartelera</h2>
+                        <div id="peliculas-lista" class="grid-peliculas"></div>
                     </div>
                 </section>
                 <section class="peliculas-info col">
@@ -109,6 +107,7 @@
                         <p class="text-gray-600 mb-2"><strong>Dirección:</strong> ${sanitize(appState.selectedCine.direccion || 'No disponible')}</p>
                         <p class="text-gray-600 mb-2"><strong>Teléfono:</strong> ${sanitize(appState.selectedCine.telefono || 'No disponible')}</p>
                         <p class="text-gray-600"><strong>Precio:</strong> ${precioBase != null && !isNaN(precioBase) ? precioBase.toFixed(2) + ' €' : 'No disponible'}</p>
+                        <p class="text-gray-600 mb-2"><strong>Numero de salas:</strong> ${appState.selectedCine.salas}</p>
                     `;
                 } else {
                     detalles.innerHTML = `
@@ -123,31 +122,62 @@
         // Renderizar detalles de las peliculas en el cine elegido
         function renderizarPeliculas(){
             console.log(appState.peliculas);
-            const pelis = document.getElementById('peliculas-lista');
-            pelis.innerHTML = '';
-            pelis.style.opacity = '0';
+            const contenedor = document.getElementById('peliculas-lista');
+            contenedor.innerHTML = ''; // Limpia la lista
+            contenedor.style.opacity = '0';
             setTimeout(() => {
                 if (appState.selectedCine) {
                     appState.peliculas.forEach(peli => {
-                        const li = document.createElement('li');
-                        li.className = "peli-item p-2 rounded";
-                        li.textContent = peli.titulo;
-                        li.addEventListener('click', () => {
+                        const item = document.createElement('div');
+                        item.className = 'pelicula-item'
+                        if( peli.poster_url && validarURL(peli.poster_url)) {
+                            item.innerHTML = `
+                                <img src="${peli.poster_url}" alt="${peli.titulo}" onerror="this.parentNode.innerHTML = '<h3>${escapeHtml(peli.titulo)}</h3>';
+                                    this.nextElementSibling.style.display='block'">
+                                <div class="pelicula-titulo" style="display: none;">
+                                      ${peli.titulo}
+                                </div>
+                            `;
+                        } else {
+                            // Mostrar solo título en texto
+                            item.innerHTML = `
+                                <div class="pelicula-titulo">
+                                    ${peli.titulo}
+                                </div>
+                            `;
+                        }
+                        item.addEventListener('click', () => {
                             appState.selectedPelicula = peli;
                             {#cargarInfoPeli#}
                             {#renderizarInfoPeli#}
                             console.log(appState.selectedPelicula);
                         });
-                        pelis.appendChild(li);
+                        contenedor.appendChild(item);
                     })
                 } else {
-                    pelis.innerHTML = `
-                        <h2 class="text-2xl font-bold mb-4 text-gray-800">Selecciona un cine</h2>
-                        <p class="text-gray-600">Haz clic en un cine de la lista para ver sus detalles.</p>
+                    contenedor.innerHTML = `
+                        <h2 class="text-2xl font-bold mb-4 text-gray-800">Selecciona una pelicula.</h2>
+                        <p class="text-gray-600">Haz clic en una pelicula de la lista para ver sus detalles.</p>
                     `;
                 }
-                pelis.style.opacity = '1';
+                contenedor.style.opacity = '1';
             }, 350);
+        }
+
+        // Validar URLs
+        function validarURL(url) {
+            try {
+                new URL(url);
+                return true;
+            }
+            catch (_){ return false; }
+        }
+
+        // Funcion para escapar HTML (Seguridad) para prevenir XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Mostrar mensaje de error
@@ -166,8 +196,9 @@
             return div.innerHTML;
         }
 
+        window.addEventListener('load', cargarCines);
         // Inicializar
-        cargarCines();
+        //cargarCines();
     </script>
 </body>
 </html>

@@ -73,7 +73,6 @@ def agregar_datos_cine():
             print(salas)
             # Preparamos los datos de las salas
             salas_datos = [(s['id_cine'], s['numero'], s['capacidad']) for s in salas]
-            print(salas_datos)
             sql_salas = """
             INSERT INTO salas (id_cine, numero, capacidad) VALUES (%s, %s, %s)
             """
