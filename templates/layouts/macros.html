@@ -1,0 +1,11 @@
+{% macro format_date(date) %}
+    {{ date.strftime('Dia %d/%m/%Y, Hora %H:%M') }}
+{% endmacro %}
+
+{% macro copyright_year(date) %}
+    {% if date is defined %}
+        {{ date.year }}
+    {% else %}
+        {{ '' }}
+    {% endif %}
+{% endmacro %}

@@ -4,9 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Arreglado el grid de las peliculas.&#10;Falta mostrar la informacion de la pelicula y horarios y sala de dicha pelicula.">
+    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Solucionado el problema con mostrar las salas y horas en la web.">
+      <change afterPath="$PROJECT_DIR$/static/admin.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/admin.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/_footer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/_navbar.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/cines.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/funciones.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/peliculas.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/layouts/macros.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/FlaskCine.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FlaskCine.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +33,9 @@
       <list>
         <option value="Flask Main" />
         <option value="Python Script" />
-        <option value="HTML File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -50,12 +64,12 @@
     &quot;assignee&quot;: &quot;Draklob&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Draklob/FlaskCine.git",
-    "accountId": "40d73893-f9e4-4055-ae20-1e37a6a5b6ef"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Draklob/FlaskCine.git&quot;,
+    &quot;accountId&quot;: &quot;40d73893-f9e4-4055-ae20-1e37a6a5b6ef&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -101,6 +115,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ACADINFO\PycharmProjects\FlaskCine\templates\admin" />
       <recent name="C:\Users\ACADINFO\PycharmProjects\FlaskCine\templates" />
       <recent name="C:\Users\ACADINFO\PycharmProjects\FlaskCine\static" />
     </key>
@@ -225,7 +240,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745418508987</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Solucionado el problema con mostrar las salas y horas en la web.">
+      <option name="closed" value="true" />
+      <created>1745508202053</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1745508202053</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -259,11 +282,12 @@
     <MESSAGE value="Subiendo primeros cambios en el html y css, muestra los cines y los detalles de cada uno." />
     <MESSAGE value="Cambios en la tabla salas y hay que comprobar que se introducen bien ahora en ella. Se cambio tambien el salas.json" />
     <MESSAGE value="Arreglado el grid de las peliculas.&#10;Falta mostrar la informacion de la pelicula y horarios y sala de dicha pelicula." />
-    <option name="LAST_COMMIT_MESSAGE" value="Arreglado el grid de las peliculas.&#10;Falta mostrar la informacion de la pelicula y horarios y sala de dicha pelicula." />
+    <MESSAGE value="Solucionado el problema con mostrar las salas y horas en la web." />
+    <option name="LAST_COMMIT_MESSAGE" value="Solucionado el problema con mostrar las salas y horas en la web." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FlaskCine$FlaskCine.coverage" NAME="FlaskCine Coverage Results" MODIFIED="1744218040854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1745517388275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/FlaskCine$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1744654092730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1745504603081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
