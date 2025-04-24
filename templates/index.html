@@ -147,24 +147,24 @@
             setTimeout(() => {
                 if (appState.selectedCine) {
                     appState.peliculas.forEach(peli => {
-                        const sesiones = peli.horarios.split(';').map(sesion => sesion.trim());
-                        const sesion = sesiones.forEach(dividirHorarios);
-
-                        console.log(sesion);
                         const item = document.createElement('div');
                         item.className = 'pelicula-item'
-                        html = sesiones.map(sesion => `
+
+                        const sesiones = dividirHorarios(peli.horarios);
+                        const sesionesHTML = sesiones && sesiones.length > 0 ?
+                            sesiones.map(sesion => `
                             <div class="sesion-badge">
-                                <span class="sala">${sesion}</span>
-                            </div>
-                         `).join('');
+                                  <span class="sala">${sesion.sala}</span>
+                                  <span class="hora">${sesion.hora}</span>
+                                </div>
+                              `).join('')
+                            : '';
+
                         if( peli.poster_url && validarURL(peli.poster_url)) {
                             item.innerHTML = `
                                 <img src="${peli.poster_url}" alt="${peli.titulo}" onerror="this.parentNode.innerHTML = '<h3>${escapeHtml(peli.titulo)}</h3>';
                                     this.nextElementSibling.style.display='block'">
-                                <div class="sesiones-overlay"></div>
-                            ` + html;
-
+                                <div class="sesiones-overlay">${sesionesHTML}</div>`;
                         } else {
                             // Mostrar solo título en texto
                             item.innerHTML = `
@@ -240,12 +240,15 @@
         }
 
         // Cogemos los horarios y los dividimos
-        function dividirHorarios(value){
-            const sala = value.slice(0,7);
-            const hora = value.slice(13);
-            console.log(sala);
-            console.log(hora);
-            {#return new Map(['sala', sala], ['hora', hora]);#}
+        function dividirHorarios( horarios ){
+            // Dividimos primero cada sesion por cada ;
+            const horarioSeparado = horarios.split(';').map(sesion => sesion.trim());
+            // Devolvemos un map de objetos con la sala y la hora de la pelicula.
+            return horarioSeparado.map( horario => {
+                const sala = horario.slice(0,7).trim();
+                const hora = horario.slice(13).trim();
+                return {sala, hora};
+            })
         }
 
         // Validar URLs
