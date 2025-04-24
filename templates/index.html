@@ -148,8 +148,9 @@
                 if (appState.selectedCine) {
                     appState.peliculas.forEach(peli => {
                         const sesiones = peli.horarios.split(';').map(sesion => sesion.trim());
+                        const sesion = sesiones.forEach(dividirHorarios);
 
-                        console.log(sesiones);
+                        console.log(sesion);
                         const item = document.createElement('div');
                         item.className = 'pelicula-item'
                         html = sesiones.map(sesion => `
@@ -236,6 +237,15 @@
                 }
                 info_peli.style.opacity = '1';
             }, 300);
+        }
+
+        // Cogemos los horarios y los dividimos
+        function dividirHorarios(value){
+            const sala = value.slice(0,7);
+            const hora = value.slice(13);
+            console.log(sala);
+            console.log(hora);
+            {#return new Map(['sala', sala], ['hora', hora]);#}
         }
 
         // Validar URLs
