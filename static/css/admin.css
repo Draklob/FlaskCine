@@ -1,0 +1,147 @@
+/* ===== ESTILOS GENERALES ===== */
+:root {
+  --primary-color: #2c3e50;
+  --success-color: #27ae60;
+  --info-color: #2980b9;
+  --light-gray: #f8f9fa;
+  --border-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+/* ===== ESTRUCTURA DE LAS CARDS ===== */
+.card {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-top: 3px solid transparent;
+  display: flex;
+  flex-direction: column; /* Distribuye el espacio internamente */
+  max-height: 100%; /* Evita que la tarjeta se expanda más allá del contenedor padre */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Cuerpo con scroll */
+.card-body {
+  padding: 0;
+  overflow: hidden;
+  flex-grow: 1; /* Ocupa el espacio disponible en la tarjeta */
+}
+
+.scrollable-content {
+  max-height: 650px; /* Altura fija del contenedor (ajusta según necesites) */
+  overflow-y: auto;
+}
+
+/* ===== COLORES ESPECÍFICOS ===== */
+/* Cines */
+.border-primary {
+  border-top-color: var(--primary-color) !important;
+}
+
+.card-header.bg-primary {
+  background-color: var(--primary-color) !important;
+  color: white;
+}
+
+/* Películas */
+.border-success {
+  border-top-color: var(--success-color) !important;
+}
+
+.card-header.bg-success {
+  background-color: var(--success-color) !important;
+  color: white;
+}
+
+/* Funciones */
+.border-info {
+  border-top-color: var(--info-color) !important;
+}
+
+.card-header.bg-info {
+  background-color: var(--info-color) !important;
+  color: white;
+}
+
+/* ===== LISTAS ===== */
+.list-group {
+  border-radius: 0;
+}
+
+.list-group-item {
+  padding: 0.85rem 1.25rem;
+  border-color: var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: var(--light-gray);
+}
+
+/* Items con contenido flexible */
+.list-group-item > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Texto truncado */
+.text-truncate {
+  max-width: 180px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+}
+
+/* ===== SCROLLBAR PERSONALIZADA ===== */
+.scrollable-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .card {
+    height: 400px; /* Altura menor en tablets */
+  }
+
+  .scrollable-content {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    height: 350px; /* Altura compacta en móviles */
+    margin-bottom: 1.5rem;
+  }
+}

@@ -3,7 +3,7 @@ from flask import Flask, jsonify, render_template, request, url_for, redirect, B
 from flask_cors import CORS
 from crear_datos_cine import crear_base_datos, listar_base_datos, crear_tablas, conectar_base_datos_cine
 from agregar_datos_cine import agregar_datos_cine
-from datetime import datetime
+from routes.admin_routes import admin_bp
 
 def iniciar_base_datos():
     print("\n=== Iniciando configuración de la base de datos ===")
@@ -12,7 +12,6 @@ def iniciar_base_datos():
     agregar_datos_cine()
     #listar_base_datos()
 
-admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 app = Flask(__name__)
 CORS(app)
 
@@ -89,26 +88,6 @@ def get_peliculas(id_cine):
 @app.route('/')
 def serve_index():
     return render_template('index.html')
-
-@admin_bp.route('/')
-def dashboard():
-    return render_template('admin/dashboard.html', now = datetime.now())
-
-@admin_bp.route('/cines')
-def cines():
-    # Lógica para obtener cines de la base de datos
-    return render_template('admin/cines.html')
-
-
-# Rutas similares para películas y funciones
-@app.route('/admin/peliculas')
-def admin_peliculas():
-    return render_template('admin/peliculas.html')
-
-
-@app.route('/admin/funciones')
-def admin_funciones():
-    return render_template('admin/funciones.html')
 
 app.register_blueprint(admin_bp)
 

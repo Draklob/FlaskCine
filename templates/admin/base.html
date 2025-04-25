@@ -16,12 +16,13 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="admin-body">
+<body class="admin-body d-flex flex-column min-vh-100">
    <!-- Navbar -->
     {% include 'admin/_navbar.html' %}
 
+{#   Con el flex grow 1 asegura que llena el espacio disponible y empuja al footer.#}
     <!-- Contenido principal -->
-    <main class="container py-4">
+    <main class="container py-4 flex-grow-1">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}

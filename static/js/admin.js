@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     // Confirmación para cerrar sesión
     document.querySelector('.btn-logout')?.addEventListener('click', () => {
