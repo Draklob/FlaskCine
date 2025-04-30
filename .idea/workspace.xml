@@ -4,20 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Implementacion de un formulario a la pagin web para manejar la bases de datos.">
-      <change afterPath="$PROJECT_DIR$/routes/admin_routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/_footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/_footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/cines.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/cines.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/admin_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/admin_routes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,8 +52,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Draklob/FlaskCine.git&quot;,
-    &quot;accountId&quot;: &quot;40d73893-f9e4-4055-ae20-1e37a6a5b6ef&quot;
+    &quot;url&quot;: &quot;https://github.com/Draklob/FlaskCine&quot;,
+    &quot;accountId&quot;: &quot;1d4f4d5c-efb6-4974-b428-ca9bae4e61e5&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -79,37 +68,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Flask server.Flask (app.py).executor": "Run",
-    "Flask server.FlaskCine.executor": "Run",
-    "Python.flask_run.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "database.data.extractors.current.export.id": "JSON-Groovy.json.groovy",
-    "database.data.extractors.current.id": "JSON-Groovy.json.groovy",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/ACADINFO/PycharmProjects/FlaskCine",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,
+    &quot;Flask server.FlaskCine.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flask_run.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;JSON-Groovy.json.groovy&quot;,
+    &quot;database.data.extractors.current.id&quot;: &quot;JSON-Groovy.json.groovy&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ACADINFO/PycharmProjects/FlaskCine&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ],
-    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
-      "MySQL"
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;MySQL&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ACADINFO\PycharmProjects\FlaskCine\routes" />
@@ -198,7 +187,8 @@
       <workItem from="1745258022872" duration="3817000" />
       <workItem from="1745333559369" duration="12022000" />
       <workItem from="1745501998831" duration="2599000" />
-      <workItem from="1745592399440" duration="16114000" />
+      <workItem from="1745592399440" duration="16448000" />
+      <workItem from="1746024523834" duration="9407000" />
     </task>
     <task id="LOCAL-00001" summary="Subiendo primera actualizacion.">
       <option name="closed" value="true" />
@@ -256,7 +246,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745522162662</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard.">
+      <option name="closed" value="true" />
+      <created>1745608843587</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1745608843587</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -292,11 +290,12 @@
     <MESSAGE value="Arreglado el grid de las peliculas.&#10;Falta mostrar la informacion de la pelicula y horarios y sala de dicha pelicula." />
     <MESSAGE value="Solucionado el problema con mostrar las salas y horas en la web." />
     <MESSAGE value="Implementacion de un formulario a la pagin web para manejar la bases de datos." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementacion de un formulario a la pagin web para manejar la bases de datos." />
+    <MESSAGE value="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard." />
+    <option name="LAST_COMMIT_MESSAGE" value="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FlaskCine$FlaskCine.coverage" NAME="FlaskCine Coverage Results" MODIFIED="1744218040854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1745599340008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1746034339617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/FlaskCine$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1744654092730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

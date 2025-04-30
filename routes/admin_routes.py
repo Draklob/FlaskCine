@@ -1,3 +1,4 @@
+import pymysql
 from flask import render_template, redirect, url_for, flash, request
 from . import admin_bp  # Blueprint creado en __init__.py
 from datetime import datetime
@@ -8,7 +9,7 @@ cache = Cache()
 
 def conectar_base_datos_con_SQL(sql):
     conexion = conectar_base_datos_cine()
-    cursor = conexion.cursor()
+    cursor = conexion.cursor(pymysql.cursors.DictCursor)
 
     cursor.execute(sql)
     data = cursor.fetchall()
@@ -48,8 +49,37 @@ def get_funciones_cache():
     funciones = conectar_base_datos_con_SQL(sql)
 
     for funcion in funciones:
+        horarios = funcion.pop('horarios').split(';')
+        sesiones = []
+        for sesion in horarios:
+            sesiones.append(sesion.strip())
+
+        horarios_dict = {}
+        for sesion in sesiones:
+            funcion_split = sesion.split(' a las ')
+            if len(funcion_split) != 2:
+                print("Error en el split al separar sala y hora")
+                continue
+
+            # Cogemos la sala donde echan la pelicula
+            sala = funcion_split[0]
+            # Guardamos la hora de la sesion
+            hora = funcion_split[1]
+            # Comprobamos que si ya existe, de ser asi le introducimos la siguiente hora de la funcion de esa peli.
+            if funcion.get(sala):
+                funcion[sala].append(hora)
+            else:
+                # Si aun no existe esa sala registrada, guardamos la sala y la primera hora de esa sala
+                funcion[sala] = [hora]
+
         print(funcion)
-        # horarios = funcion.pop('horarios')
+
+        # Guardamos la sala en la que se reproduce
+        sala = ""
+        # if i < len(sesiones):
+        #     sala = sesiones[i][:7].strip()
+        #
+
         # salas_horas = {}
         # for horario in horarios:
         #     horario = horario.strip()
@@ -68,11 +98,7 @@ def get_funciones_cache():
         #     salas_horas[sala].append(hora)
         # print(salas_horas)
 
-        funcion['horarios'] = funcion['horarios'].split(';')
-
-    # print(funciones)
-    # funciones_filtrado = funciones['horarios'].split(';')
-    # print(funciones_filtrado)
+    print(funciones)
 
     return ""
 
