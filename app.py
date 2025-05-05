@@ -13,6 +13,7 @@ def iniciar_base_datos():
     #listar_base_datos()
 
 app = Flask(__name__)
+app.secret_key = '716f1373b77d0ac5498ee3d9ad8888875b1df7ffe57afc362b915bd'
 CORS(app)
 
 @app.route("/api/info_peli/<int:id_pelicula>")

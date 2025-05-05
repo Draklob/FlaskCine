@@ -7,9 +7,9 @@
     <h2 class="fw-bold text-primary">
         <i class="fas fa-building me-2"></i>Gestión de Cines
     </h2>
-{#    <a href="{{ url_for('admin.agregar_cine') }}" class="btn btn-primary">#}
-{#        <i class="fas fa-plus me-1"></i> Nuevo Cine#}
-{#    </a>#}
+    <a href="{{ url_for('admin.gestionar_cines') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nuevo Cine
+    </a>
 </div>
 
 <div class="card">
@@ -20,18 +20,23 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Ubicación</th>
+                        <th>Direccion</th>
+                        <th>Telefono</th>
                         <th>Salas</th>
-                        <th>Acciones</th>
+                        <th>Funciones Activas</th>
+                        <th>Precio Base</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for cine in cines %}
                     <tr>
-                        <td>{{ cine.id }}</td>
+                        <td>{{ cine.id_cine }}</td>
                         <td>{{ cine.nombre }}</td>
-                        <td>{{ cine.ciudad }}</td>
-                        <td>{{ cine.salas|length }}</td>
+                        <td>{{ cine.direccion }}</td>
+                        <td>{{ cine.telefono }}</td>
+                        <td>{{ cine.num_salas }}</td>
+                        <td>{{ cine.num_funciones }}</td>
+                        <td>{{ cine.precio_base }}</td>
                         <td>
                             <div class="btn-group">
                                 <a href="#" class="btn btn-sm btn-outline-primary">

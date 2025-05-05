@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard.">
+    <list default="true" id="481115fe-f8ec-47f7-a8ba-ede85c705c1b" name="Changes" comment="Arreglado el tema de separar sala y horas en esa respectiva sala de una pelicula.&#10;&#10;Me falta ver en que cine ponen &quot;x&quot; pelicula y guardar esos cines.">
+      <change afterPath="$PROJECT_DIR$/templates/admin/form_cines.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0635a0ed-52a7-446e-85d5-1b95c4be6f29.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0635a0ed-52a7-446e-85d5-1b95c4be6f29.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/admin_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/admin_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/cines.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/cines.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/dashboard.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,7 +194,8 @@
       <workItem from="1745333559369" duration="12022000" />
       <workItem from="1745501998831" duration="2599000" />
       <workItem from="1745592399440" duration="16448000" />
-      <workItem from="1746024523834" duration="9407000" />
+      <workItem from="1746024523834" duration="9635000" />
+      <workItem from="1746456072047" duration="16564000" />
     </task>
     <task id="LOCAL-00001" summary="Subiendo primera actualizacion.">
       <option name="closed" value="true" />
@@ -254,7 +261,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745608843587</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Arreglado el tema de separar sala y horas en esa respectiva sala de una pelicula.&#10;&#10;Me falta ver en que cine ponen &quot;x&quot; pelicula y guardar esos cines.">
+      <option name="closed" value="true" />
+      <created>1746034715880</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1746034715880</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -291,11 +306,12 @@
     <MESSAGE value="Solucionado el problema con mostrar las salas y horas en la web." />
     <MESSAGE value="Implementacion de un formulario a la pagin web para manejar la bases de datos." />
     <MESSAGE value="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard." />
-    <option name="LAST_COMMIT_MESSAGE" value="Cambios en la estructura del formulario y del proyecto en general.&#10;&#10;Falta arreglar un par de cosas en el dashboard." />
+    <MESSAGE value="Arreglado el tema de separar sala y horas en esa respectiva sala de una pelicula.&#10;&#10;Me falta ver en que cine ponen &quot;x&quot; pelicula y guardar esos cines." />
+    <option name="LAST_COMMIT_MESSAGE" value="Arreglado el tema de separar sala y horas en esa respectiva sala de una pelicula.&#10;&#10;Me falta ver en que cine ponen &quot;x&quot; pelicula y guardar esos cines." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FlaskCine$FlaskCine.coverage" NAME="FlaskCine Coverage Results" MODIFIED="1744218040854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1746034339617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/FlaskCine$flask_run.coverage" NAME="flask_run Coverage Results" MODIFIED="1746472063002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/FlaskCine$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1744654092730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
