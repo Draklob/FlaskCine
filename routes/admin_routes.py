@@ -7,30 +7,6 @@ from crear_datos_cine import conectar_base_datos_cine
 
 cache = Cache()
 
-def insertar_registro(tabla, datos: dict):
-    try:
-        conexion = conectar_base_datos_cine()
-        cursor = conexion.cursor()
-
-        columnas = ', '.join(datos.keys())
-        placeholders = ', '.join(['%s'] * len(datos))
-        print("Insertando cine...")
-        print(datos)
-        query = f"INSERT INTO {tabla} ({columnas}) VALUES ({placeholders})"
-        cursor.execute(query, datos.values())
-        conexion.commit()
-        return cursor.lastrowid
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-    finally:
-        if conexion.is_connected():
-            print("Cine agregado!!")
-            cursor.close()
-            conexion.close()
-
 def conectar_base_datos_con_SQL(sql):
     conexion = conectar_base_datos_cine()
     cursor = conexion.cursor(pymysql.cursors.DictCursor)
@@ -41,6 +17,36 @@ def conectar_base_datos_con_SQL(sql):
     conexion.close()
 
     return data
+
+def insertar_registro(tabla, datos: dict):
+    conexion = None
+    cursor = None
+    try:
+        conexion = conectar_base_datos_cine()
+        cursor = conexion.cursor()
+
+        columnas = ', '.join(datos.keys())
+        placeholders = ', '.join(['%s'] * len(datos))
+        print("Insertando cine...")
+        print(datos)
+        query = f"INSERT INTO {tabla} ({columnas}) VALUES ({placeholders})"
+        cursor.execute(query, tuple(datos.values()))
+        conexion.commit()
+        return cursor.lastrowid
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+    finally:
+        print("Cine agregado!!")
+        if cursor:
+            cursor.close()
+        if conexion and conexion.open:
+            conexion.close()
+
+def actualizar_registro(tabla, datos ):
+    pass
 
 def get_cines_cache():
     cines = conectar_base_datos_con_SQL('SELECT c.nombre AS nombre, COUNT(s.id_sala) AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine GROUP BY c.id_cine, c.nombre LIMIT 15')
@@ -79,7 +85,6 @@ def get_funciones_cache():
         for sesion in horarios:
             sesiones.append(sesion.strip())
 
-        horarios_dict = {}
         for sesion in sesiones:
             funcion_split = sesion.split(' a las ')
             if len(funcion_split) != 2:
@@ -98,9 +103,24 @@ def get_funciones_cache():
             else:
                 funcion['hora'].append(hora)
 
-    print(funciones)
-
     return funciones
+
+def obtener_cine_por_id(cine_id):
+    """ Obtiene los datos de un cine especifico"""
+    conexion = None
+    try:
+        conexion = conectar_base_datos_cine()
+        with conexion.cursor() as cursor:
+            sql = "SELECT * FROM cines WHERE id_cine = %s"
+            cursor.execute(sql, (cine_id,))
+            cine = cursor.fetchone() # En este caso devuelve diccionario porque lo tenemos configurado con DictCursor
+            return cine
+    except Exception as e:
+        print(f"Error al obtener cine: {e}")
+        return None
+    finally:
+        if conexion and conexion.open:
+            conexion.close()
 
 @admin_bp.route('/dashboard')
 def dashboard():
@@ -135,9 +155,8 @@ def cines():
 def gestionar_cines():
     return render_template('admin/form_cines.html')
 
-@admin_bp.route('/cines/nuevo', methods=['GET', 'POST'])
+@admin_bp.route('/cines/nuevo', methods=['POST'])
 def nuevo_cine():
-    print(request.method)
     if request.method == 'POST':
         nombre = request.form['nombre']
         direccion = request.form['direccion']
@@ -164,6 +183,24 @@ def nuevo_cine():
         return redirect(url_for('admin.dashboard'))
 
     return render_template('admin/form_cines.html')
+
+@admin_bp.route('/cines/editar/<int:cine_id>', methods=['GET', 'POST'])
+def editar_cine(cine_id):
+    cine = None
+    print(request.method)
+    if request.method == "GET":
+        cine = obtener_cine_por_id(cine_id)
+        if not cine:
+            print("NO CINE")
+
+    if request.method == "POST":
+        nombre = request.form['nombre']
+        direccion = request.form['direccion']
+        telefono = request.form['telefono']
+        precio_base = request.form['precio_base']
+
+    return render_template('admin/editar_cine.html', cine = cine)
+
 
 # Rutas similares para películas y funciones
 @admin_bp.route('/admin/peliculas')
