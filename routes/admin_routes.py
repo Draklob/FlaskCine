@@ -45,14 +45,40 @@ def insertar_registro(tabla, datos: dict):
         if conexion and conexion.open:
             conexion.close()
 
-def actualizar_registro(tabla, datos ):
-    pass
+def actualizar_registro(tabla, datos: dict ):
+    conexion = None
+    cursor = None
+    try:
+        conexion = conectar_base_datos_cine()
+        cursor = conexion.cursor()
 
-def get_cines_cache():
+        # Construimos la clausula SET dinamicamente
+        set_clause = ', '.join([f"{key} = %s" for key in list(datos.keys())[:-1]])
+        print(f"Clausulas {set_clause}")
+        valores = list(datos.values())
+        print(f"tupla: {tuple(valores)}")
+        query = f"UPDATE {tabla} SET {set_clause} WHERE id_cine = %s"
+        cursor.execute(query, tuple(valores))
+        conexion.commit()
+
+        return cursor.rowcount >0
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+    finally:
+        print("Cambio realizado")
+        if cursor:
+            cursor.close()
+        if conexion and conexion.open:
+            conexion.close()
+
+def get_cines():
     cines = conectar_base_datos_con_SQL('SELECT c.nombre AS nombre, COUNT(s.id_sala) AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine GROUP BY c.id_cine, c.nombre LIMIT 15')
     return cines
 
-def get_peliculas_cache():
+def get_peliculas():
     sql = """
     SELECT p.titulo AS titulo, p.año AS año
         FROM peliculas p LEFT JOIN funciones f ON p.id_pelicula = f.id_pelicula
@@ -61,7 +87,7 @@ def get_peliculas_cache():
     pelis = conectar_base_datos_con_SQL(sql)
     return pelis
 
-def get_funciones_cache():
+def get_funciones():
     sql = """
         SELECT
             c.nombre,
@@ -124,7 +150,7 @@ def obtener_cine_por_id(cine_id):
 
 @admin_bp.route('/dashboard')
 def dashboard():
-    return render_template('admin/dashboard.html', cines= get_cines_cache(), pelis= get_peliculas_cache(), funciones= get_funciones_cache(), now = datetime.now())
+    return render_template('admin/dashboard.html', cines= get_cines(), pelis= get_peliculas(), funciones= get_funciones(), now = datetime.now())
 
 @admin_bp.route('/cines')
 def cines():
@@ -180,16 +206,17 @@ def nuevo_cine():
         insertar_registro('cines', datos_cine)
 
         flash('Cine agregado correctamente', 'success')
-        return redirect(url_for('admin.dashboard'))
+        return redirect(url_for('admin.cines'))
 
     return render_template('admin/form_cines.html')
 
 @admin_bp.route('/cines/editar/<int:cine_id>', methods=['GET', 'POST'])
 def editar_cine(cine_id):
     cine = None
-    print(request.method)
+
     if request.method == "GET":
         cine = obtener_cine_por_id(cine_id)
+        print(f"GET Cine {cine}")
         if not cine:
             print("NO CINE")
 
@@ -198,6 +225,45 @@ def editar_cine(cine_id):
         direccion = request.form['direccion']
         telefono = request.form['telefono']
         precio_base = request.form['precio_base']
+
+        # Validaciones
+        if not nombre or not precio_base:
+            flash('Nombre y precio base son obligatorios', 'danger')
+            return redirect(url_for('cines.editar_cine', cine_id=cine_id))
+        try:
+            precio_base = float(precio_base)
+            if precio_base < 0:
+                flash('El precio base no puede ser negativo', 'danger')
+                return redirect(url_for('cines.editar_cine', cine_id=cine_id))
+        except ValueError:
+            flash('El precio debe ser un numero valida', 'danger')
+            return redirect(url_for('cines.editar_cine', cine_id=cine_id))
+
+        cine = obtener_cine_por_id(cine_id)
+        print(f"Imprimiendo cine: {cine}")
+        datos_cine = {}
+        # Comprobamos que actualizamos los datos que son diferentes a los que ya tiene el cine.
+        if nombre != cine['nombre']:
+            datos_cine['nombre'] = nombre
+        if direccion != cine['direccion']:
+            datos_cine['direccion'] = direccion
+        if telefono != cine['telefono']:
+            datos_cine['telefono'] = telefono
+        if precio_base != cine['precio_base']:
+            datos_cine['precio_base'] = precio_base
+
+        # Si al menos tenemos algun dato para cambiar
+        if datos_cine:
+            datos_cine['cine_id'] = cine_id
+            print(datos_cine)
+            if actualizar_registro('cines', datos_cine):
+                flash('Cine actualizado correctamente', 'success')
+            else:
+                flash('Error al actualizar el cine', 'danger')
+            return redirect(url_for('admin.cines'))
+        else:
+            print("No hay cambios")
+            return redirect(url_for('admin.cines'))
 
     return render_template('admin/editar_cine.html', cine = cine)
 
