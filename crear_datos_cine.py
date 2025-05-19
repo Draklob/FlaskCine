@@ -111,7 +111,7 @@ def crear_tablas():
             numero VARCHAR(50) NOT NULL,
             capacidad INT NOT NULL,
             id_cine INT NOT NULL,
-            FOREIGN KEY (id_cine) REFERENCES cines (id_cine)
+            FOREIGN KEY (id_cine) REFERENCES cines (id_cine) ON DELETE CASCADE 
             );
             
             -- Crea la tabla FUNCIONES
@@ -120,8 +120,8 @@ def crear_tablas():
             id_pelicula INT,
             id_sala INT,
             fecha_hora DATETIME NOT NULL,
-            FOREIGN KEY (id_pelicula) REFERENCES peliculas (id_pelicula),
-            FOREIGN KEY (id_sala) REFERENCES salas (id_sala)
+            FOREIGN KEY (id_pelicula) REFERENCES peliculas (id_pelicula) ON DELETE CASCADE ,
+            FOREIGN KEY (id_sala) REFERENCES salas (id_sala) ON DELETE CASCADE 
             );
             
             -- Crea la tabla Usuarios
@@ -143,8 +143,8 @@ def crear_tablas():
             cantidad_entradas INT NOT NULL,
             fecha_hora DATETIME NOT NULL,
             pago_total DECIMAL (4,2) NOT NULL,
-            FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario),
-            FOREIGN KEY (id_funcion) REFERENCES funciones (id_funcion)
+            FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE ,
+            FOREIGN KEY (id_funcion) REFERENCES funciones (id_funcion) ON DELETE CASCADE
             );
             
             -- Crea la tabla Asientos
@@ -159,8 +159,8 @@ def crear_tablas():
             CREATE TABLE IF NOT EXISTS reservarasiento(
             id_reserva INT,
             id_asiento INT,
-            FOREIGN KEY (id_reserva) REFERENCES reservas (id_reserva),
-            FOREIGN KEY (id_asiento) REFERENCES asientos (id_asiento)
+            FOREIGN KEY (id_reserva) REFERENCES reservas (id_reserva) ON DELETE CASCADE ,
+            FOREIGN KEY (id_asiento) REFERENCES asientos (id_asiento) ON DELETE CASCADE
             );
             
             -- Crea la tabla descuentos
@@ -179,8 +179,8 @@ def crear_tablas():
             id_descuento INT,
             porcentaje DECIMAL(3,3) NOT NULL, -- 0.30 para un 30% de descuento
             dia_semana INT CHECK (dia_semana BETWEEN 1 AND 7 OR dia_semana IS NULL),
-            FOREIGN KEY (id_cine) REFERENCES cines (id_cine),
-            FOREIGN KEY (id_descuento) REFERENCES descuentos (id_descuento)
+            FOREIGN KEY (id_cine) REFERENCES cines (id_cine) ON DELETE CASCADE ,
+            FOREIGN KEY (id_descuento) REFERENCES descuentos (id_descuento) ON DELETE CASCADE 
             );
             """
         # TERMINA LA CREACION DE LAS TABLAS

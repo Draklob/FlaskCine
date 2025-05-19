@@ -5,6 +5,7 @@ from datetime import datetime
 from flask_caching import Cache
 from crear_datos_cine import conectar_base_datos_cine
 
+
 cache = Cache()
 
 def conectar_base_datos_con_SQL(sql):
@@ -51,13 +52,11 @@ def actualizar_registro(tabla, datos: dict ):
     try:
         conexion = conectar_base_datos_cine()
         cursor = conexion.cursor()
-
-        # Construimos la clausula SET dinamicamente
+        identificador = list(datos.keys())[-1]
+        # Construimos la clausula SET dinamicamente. Pasamos las keys a una lista para ignorar el ultimo elemento, que es el ID
         set_clause = ', '.join([f"{key} = %s" for key in list(datos.keys())[:-1]])
-        print(f"Clausulas {set_clause}")
         valores = list(datos.values())
-        print(f"tupla: {tuple(valores)}")
-        query = f"UPDATE {tabla} SET {set_clause} WHERE id_cine = %s"
+        query = f"UPDATE {tabla} SET {set_clause} WHERE {identificador} = %s"
         cursor.execute(query, tuple(valores))
         conexion.commit()
 
@@ -73,6 +72,9 @@ def actualizar_registro(tabla, datos: dict ):
             cursor.close()
         if conexion and conexion.open:
             conexion.close()
+
+def eliminar_registro(tabla, id: int):
+    pass
 
 def get_cines():
     cines = conectar_base_datos_con_SQL('SELECT c.nombre AS nombre, COUNT(s.id_sala) AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine GROUP BY c.id_cine, c.nombre LIMIT 15')
@@ -267,11 +269,62 @@ def editar_cine(cine_id):
 
     return render_template('admin/editar_cine.html', cine = cine)
 
+@admin_bp.route('/admin/cines/eliminar/<int:cine_id>', methods=['POST'])
+def eliminar_cine(cine_id):
+    conexion = None
+    cursor = None
+    try:
+        conexion = conectar_base_datos_cine()
+        cursor = conexion.cursor()
+
+        query = f"DELETE FROM cines WHERE id_cine = %s"
+        cursor.execute(query, (cine_id,))
+        conexion.commit()
+
+        if cursor.rowcount > 0:
+            flash('Cine eliminado correctamente', 'success')
+        else:
+            flash('No se encontro el cine', 'warning')
+
+    except pymysql.Error as e:
+        print(f"Error: {e}")
+        flash(f"Error al eliminar la pelicula")
+        if conexion:
+            conexion.rollback()
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.open:
+            conexion.close()
+
+    return redirect(url_for('admin.cines'))
 
 # Rutas similares para películas y funciones
-@admin_bp.route('/admin/peliculas')
-def peliculas():
-    return render_template('admin/peliculas.html')
+@admin_bp.route('/peliculas')
+def mostrar_peliculas():
+    query = "SELECT titulo, año, duracion, genero, director, clasificacion FROM peliculas"
+    peliculas = conectar_base_datos_con_SQL(query)
+
+    return render_template('admin/peliculas.html', peliculas = peliculas)
+
+
+@admin_bp.route('/peliculas/nueva_pelicula', methods=['POST'])
+def nueva_pelicula():
+    if request.method == 'POST':
+        titulo = request.form['titulo']
+        año = request.form['año']
+        duracion = request.form['duracion']
+        genero = request.form['genero']
+        director = request.form['director']
+        clasificacion = request.form['clasificacion']
+
+        # Validaciones
+        if not titulo or not año or not duracion or not genero or not director or not clasificacion:
+            flash('Todos los campos son obligatorios', 'danger')
+            return redirect(url_for('peliculas.nueva_pelicula'))
+
+        datos_pelicula = {''}
 
 @admin_bp.route('/admin/funciones')
 def funciones():
