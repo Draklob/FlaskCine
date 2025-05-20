@@ -26,6 +26,7 @@ def insertar_registro(tabla, datos: dict):
         conexion = conectar_base_datos_cine()
         cursor = conexion.cursor()
 
+        # Deberia comprobar que existe la tabla primero o asi saber que el fallo empieza por ahi.
         columnas = ', '.join(datos.keys())
         placeholders = ', '.join(['%s'] * len(datos))
         print("Insertando cine...")
@@ -40,7 +41,6 @@ def insertar_registro(tabla, datos: dict):
         return None
 
     finally:
-        print("Cine agregado!!")
         if cursor:
             cursor.close()
         if conexion and conexion.open:
@@ -303,17 +303,20 @@ def eliminar_cine(cine_id):
 # Rutas similares para películas y funciones
 @admin_bp.route('/peliculas')
 def mostrar_peliculas():
-    query = "SELECT titulo, año, duracion, genero, director, clasificacion FROM peliculas"
+    query = "SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas"
     peliculas = conectar_base_datos_con_SQL(query)
 
     return render_template('admin/peliculas.html', peliculas = peliculas)
 
+@admin_bp.route('peliculas/form_nueva_pelicula')
+def formulario_pelicula():
+    return render_template('admin/form_peliculas.html')
 
 @admin_bp.route('/peliculas/nueva_pelicula', methods=['POST'])
 def nueva_pelicula():
     if request.method == 'POST':
         titulo = request.form['titulo']
-        año = request.form['año']
+        año = request.form['anho']
         duracion = request.form['duracion']
         genero = request.form['genero']
         director = request.form['director']
@@ -324,7 +327,14 @@ def nueva_pelicula():
             flash('Todos los campos son obligatorios', 'danger')
             return redirect(url_for('peliculas.nueva_pelicula'))
 
-        datos_pelicula = {''}
+        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero, 'director': director, 'clasificacion': clasificacion}
+        insertar_registro("peliculas", datos_pelicula)
+
+        flash('Pelicula agregada exitosamente', 'success')
+        return redirect(url_for('admin.mostrar_peliculas'))
+
+    # Cuando pulsamos el boton nos manda al formulario de crear pelicula
+    return render_template('admin/form_peliculas.html')
 
 @admin_bp.route('/admin/funciones')
 def funciones():

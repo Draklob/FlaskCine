@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Añadir Nueva Pelicula</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0"><i class="fas fa-plus-circle me-2"></i>Nueva Película</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.nueva_pelicula') }}">
+
+                        <!-- Nombre de la Pelicula -->
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Nombre de la Película <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej. Pocahontas" required>
+                        </div>
+
+                        <!-- Año -->
+                        <div class="mb-3">
+                            <label for="anho" class="form-label">Año<span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="anho" name="anho" placeholder="1998">
+                        </div>
+
+                        <!-- Duracion -->
+                        <div class="mb-3">
+                            <label for="duracion" class="form-label">Duración<span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="duracion" name="duracion" min="0" max="270" placeholder="Ej. 89">
+                        </div>
+
+                        <!-- Género -->
+                        <div class="mb-3">
+                            <label for="genero" class="form-label">Género <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="genero" name="genero" placeholder="Comedia" required>
+                        </div>
+
+                         <!-- Director -->
+                        <div class="mb-3">
+                            <label for="director" class="form-label">Director <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="director" name="director" placeholder="Alejandro Amenabar" required>
+                        </div>
+
+                         <!-- Clasificacion -->
+                        <div class="mb-3">
+                            <label for="clasificacion" class="form-label">Clasificación <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="clasificacion" name="clasificacion" placeholder="+13" required>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('admin.mostrar_peliculas') }}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Añadir Película</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
