@@ -7,7 +7,7 @@
         <div class="col-lg-6">
             <div class="card border-primary">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="h5 mb-0"><i class="fas fa-plus-circle me-2"></i>Nuevo Cine</h3>
+                    <h3 class="h5 mb-0"><i class="fas fa-plus-circle me-2"></i>Editar {{ cine.nombre }}</h3>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('admin.editar_cine', cine_id = cine.id_cine) }}">

@@ -8,16 +8,28 @@ from crear_datos_cine import conectar_base_datos_cine
 
 cache = Cache()
 
-def conectar_base_datos_con_SQL(sql):
+def conectar_base_datos_con_SQL(sql, argumentos= None):
     conexion = conectar_base_datos_cine()
     cursor = conexion.cursor(pymysql.cursors.DictCursor)
 
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    cursor.close()
-    conexion.close()
+    try:
+        if argumentos is None:
+            cursor.execute(sql)
+        else:
+            cursor.execute(sql, argumentos)
 
-    return data
+        data = cursor.fetchall()
+        return data
+
+    except pymysql.Error as e:
+        print(f"Error en la consulta: {e}")
+        return None
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.open:
+            conexion.close()
+
 
 def insertar_registro(tabla, datos: dict):
     conexion = None
@@ -218,7 +230,6 @@ def editar_cine(cine_id):
 
     if request.method == "GET":
         cine = obtener_cine_por_id(cine_id)
-        print(f"GET Cine {cine}")
         if not cine:
             print("NO CINE")
 
@@ -236,7 +247,7 @@ def editar_cine(cine_id):
             precio_base = float(precio_base)
             if precio_base < 0:
                 flash('El precio base no puede ser negativo', 'danger')
-                return redirect(url_for('cines.editar_cine', cine_id=cine_id))
+                return redirect(url_for('cines.editar_ciness', cine_id=cine_id))
         except ValueError:
             flash('El precio debe ser un numero valida', 'danger')
             return redirect(url_for('cines.editar_cine', cine_id=cine_id))
@@ -335,6 +346,46 @@ def nueva_pelicula():
 
     # Cuando pulsamos el boton nos manda al formulario de crear pelicula
     return render_template('admin/form_peliculas.html')
+
+@admin_bp.route('/peliculas/editar/<int:id_pelicula>', methods=['GET','POST'])
+def editar_pelicula(id_pelicula):
+    peli = None
+    if request.method == 'GET':
+        # Buscamos la peli
+        sql = """
+        SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas WHERE id_pelicula = %s
+        """
+        peli = conectar_base_datos_con_SQL(sql, (id_pelicula,))
+        print(type(peli))
+        if peli is None:
+            flash('No se encontro la pelicula', 'warning')
+            return redirect(url_for('admin.mostrar_peliculas'))
+
+    if request.method == 'POST':
+        titulo = request.form['titulo']
+        año = request.form['anho']
+        duracion = request.form['duracion']
+        genero = request.form['genero']
+        director = request.form['director']
+        clasificacion = request.form['clasificacion']
+
+        # Validaciones
+        if not titulo or not año or not duracion or not genero or not director or not clasificacion:
+            flash('Todos los campos son obligatorios', 'danger')
+            return redirect(url_for('admin.nueva_pelicula'))
+
+        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero, 'director': director,
+                          'clasificacion': clasificacion}
+        insertar_registro("peliculas", datos_pelicula)
+
+        flash('Pelicula agregada exitosamente', 'success')
+        return redirect(url_for('admin.mostrar_peliculas'))
+
+    return render_template('admin/editar_pelicula.html', pelicula = peli[0])
+
+@admin_bp.route('/peliculas/eliminar/<int:id_pelicula>', methods=['POST'])
+def eliminar_pelicula(id_pelicula):
+    pass
 
 @admin_bp.route('/admin/funciones')
 def funciones():

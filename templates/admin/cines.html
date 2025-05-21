@@ -44,7 +44,7 @@
                                 </a>
                                 <form id="delete-form-{{ cine.id_cine }}"
                                       action="{{ url_for('admin.eliminar_cine', cine_id= cine.id_cine) }}" method="POST">
-                                    <button type="submit" class="btn btn-sm btn.outline-danger delete-btn" data-cine-id="{{ cine.id_cine }}"
+                                    <button type="submit" class="btn btn-sm btn.outline-danger delete-btn-cines" data-cine-id="{{ cine.id_cine }}"
                                         data-nombre-cine="{{ cine.nombre }}">
                                         <i class="fas fa-trash"></i>
                                     </button>

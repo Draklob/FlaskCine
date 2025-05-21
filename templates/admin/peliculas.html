@@ -39,16 +39,16 @@
                         <td>{{ peli.clasificacion }}</td>
                         <td>
                             <div class="btn-group">
-                                {#<a href="{{ url_for('', cine_id=cine.id_cine) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ url_for('admin.editar_pelicula', id_pelicula= peli.id_pelicula) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-edit"></i>
-                                </a>#}
-{#                                <form id="delete-form-{{ cine.id_cine }}"#}
-{#                                      action="{{ url_for('', cine_id= cine.id_cine) }}" method="POST">#}
-{#                                    <button type="submit" class="btn btn-sm btn.outline-danger delete-btn" data-cine-id="{{ cine.id_cine }}"#}
-{#                                        data-nombre-cine="{{ cine.nombre }}">#}
-{#                                        <i class="fas fa-trash"></i>#}
-{#                                    </button>#}
-{#                                </form>#}
+                                </a>
+                                <form id="delete-form-{{ peli.id_pelicula }}"
+                                      action="{{ url_for('admin.eliminar_pelicula', id_pelicula= peli.id_pelicula) }}" method="POST">
+                                    <button type="submit" class="btn btn-sm btn.outline-danger delete-btn-peliculas" data-pelicula-id="{{ peli.id_pelicula }}"
+                                        data-pelicula-titulo="{{ peli.titulo }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
