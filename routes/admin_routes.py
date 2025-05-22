@@ -30,7 +30,6 @@ def conectar_base_datos_con_SQL(sql, argumentos= None):
         if conexion and conexion.open:
             conexion.close()
 
-
 def insertar_registro(tabla, datos: dict):
     conexion = None
     cursor = None
@@ -69,6 +68,7 @@ def actualizar_registro(tabla, datos: dict ):
         set_clause = ', '.join([f"{key} = %s" for key in list(datos.keys())[:-1]])
         valores = list(datos.values())
         query = f"UPDATE {tabla} SET {set_clause} WHERE {identificador} = %s"
+        print(query)
         cursor.execute(query, tuple(valores))
         conexion.commit()
 
@@ -161,6 +161,16 @@ def obtener_cine_por_id(cine_id):
     finally:
         if conexion and conexion.open:
             conexion.close()
+
+def obtener_pelicula(pelicula_id):
+    # Buscamos la peli
+    sql = """
+            SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas WHERE id_pelicula = %s
+            """
+    peli = conectar_base_datos_con_SQL(sql, (pelicula_id,))[0]
+
+    print(peli)
+    return peli
 
 @admin_bp.route('/dashboard')
 def dashboard():
@@ -351,41 +361,83 @@ def nueva_pelicula():
 def editar_pelicula(id_pelicula):
     peli = None
     if request.method == 'GET':
-        # Buscamos la peli
-        sql = """
-        SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas WHERE id_pelicula = %s
-        """
-        peli = conectar_base_datos_con_SQL(sql, (id_pelicula,))
-        print(type(peli))
+
+        peli = obtener_pelicula(id_pelicula)
+
         if peli is None:
             flash('No se encontro la pelicula', 'warning')
             return redirect(url_for('admin.mostrar_peliculas'))
 
     if request.method == 'POST':
         titulo = request.form['titulo']
-        año = request.form['anho']
-        duracion = request.form['duracion']
+        año = int(request.form['anho'])
+        duracion = int(request.form['duracion'])
         genero = request.form['genero']
         director = request.form['director']
         clasificacion = request.form['clasificacion']
 
-        # Validaciones
-        if not titulo or not año or not duracion or not genero or not director or not clasificacion:
-            flash('Todos los campos son obligatorios', 'danger')
-            return redirect(url_for('admin.nueva_pelicula'))
+        peli = obtener_pelicula(id_pelicula)
 
-        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero, 'director': director,
-                          'clasificacion': clasificacion}
-        insertar_registro("peliculas", datos_pelicula)
+        print(f"Web:{type(duracion)} y base datos:{type(peli['duracion'])}")
+        datos_pelicula = {}
+        # Comprobamos que cada dato se guarde, si es diferente al existente
+        if titulo != peli['titulo']:
+            datos_pelicula['titulo'] = titulo
+        if año != peli['año']:
+            datos_pelicula['año'] = año
+        if duracion != peli['duracion']:
+            datos_pelicula['duracion'] = duracion
+        if genero != peli['genero']:
+            datos_pelicula['genero'] = genero
+        if director != peli['director']:
+            datos_pelicula['director'] = director
+        if clasificacion != peli['clasificacion']:
+            datos_pelicula['clasificacion'] = clasificacion
 
-        flash('Pelicula agregada exitosamente', 'success')
-        return redirect(url_for('admin.mostrar_peliculas'))
+        if datos_pelicula:
+            datos_pelicula['id_pelicula'] = peli['id_pelicula']
+            print(f"Cambios nuevos: {datos_pelicula}")
+            actualizar_registro("peliculas", datos_pelicula)
 
-    return render_template('admin/editar_pelicula.html', pelicula = peli[0])
+            flash('Pelicula actualizada exitosamente', 'success')
+            return redirect(url_for('admin.mostrar_peliculas'))
+        else:
+            flash('No hay datos nuevos a cambiar', 'danger')
+            return redirect(url_for('admin.mostrar_peliculas'))
+
+
+    return render_template('admin/editar_pelicula.html', pelicula = peli)
 
 @admin_bp.route('/peliculas/eliminar/<int:id_pelicula>', methods=['POST'])
 def eliminar_pelicula(id_pelicula):
-    pass
+    conexion = None
+    cursor = None
+    try:
+        conexion = conectar_base_datos_cine()
+        cursor = conexion.cursor()
+
+        query = f"DELETE FROM peliculas WHERE id_pelicula = %s"
+        cursor.execute(query, (id_pelicula,))
+        conexion.commit()
+
+        if cursor.rowcount > 0:
+            flash('Cine eliminado correctamente', 'success')
+        else:
+            flash('No se encontro el cine', 'warning')
+
+    except pymysql.Error as e:
+        print(f"Error: {e}")
+        flash(f"Error al eliminar la pelicula")
+        if conexion:
+            conexion.rollback()
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.open:
+            conexion.close()
+
+    return redirect(url_for('admin.mostrar_peliculas'))
 
 @admin_bp.route('/admin/funciones')
 def funciones():

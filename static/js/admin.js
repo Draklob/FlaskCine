@@ -46,16 +46,21 @@ document.querySelectorAll('.delete-btn-peliculas').forEach(button => {
     button.addEventListener('click', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe inmediatamente
         const peliculaID = this.getAttribute('data-pelicula-id');
-        const tituloPelicula = this.getAttribute('data-titulo-pelicula');
+        const tituloPelicula = this.getAttribute('data-pelicula-titulo');
+        console.log(peliculaID + ", " + tituloPelicula);
         Swal.fire({
             title: `¿Eliminar ${tituloPelicula}?`,
             text: 'No podrás recuperar este cine después de eliminarlo.',
             icon: 'warning',
+            iconHtml: `<img src="${filmIconUrl}" style="width: 64px; height: 64px; border: navy" >`,
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                icon: 'no-border'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById(`delete-form-${peliculaID}`).submit(); // Envía el formulario

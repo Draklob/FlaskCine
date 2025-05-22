@@ -145,3 +145,8 @@ body {
     margin-bottom: 1.5rem;
   }
 }
+
+/* Quitamos el borde del icono*/
+.no-border {
+  border: 0;
+}
