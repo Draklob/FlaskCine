@@ -1,10 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "admin/base.html" %}
 
-</body>
-</html>
+{% block title %}Funciones el día de hoy{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Título -->
+    <h1 class="mb-4 text-center">Funciones por Día</h1>
+
+    <!-- Formulario para seleccionar la fecha -->
+    <div class="card mb-5">
+        <div class="card-body">
+            <form method="POST" class="row g-3">
+                <div class="col-md-6">
+                    <label for="fecha" class="form-label">Seleccionar Fecha</label>
+                    <input type="date" id="fecha" name="fecha" class="form-control" value="{{ fecha | default('', true) }}" required>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Buscar Funciones</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Resultados -->
+    {% if resultados %}
+        <h2 class="mb-4">Funciones para {{ fecha }}</h2>
+        <div class="accordion" id="cinesAccordion">
+            {% for cine in resultados | groupby('nombre_cine') %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading-{{ cine.grouper | replace(' ', '-') }}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse-{{ cine.grouper | replace(' ', '-') }}"
+                                aria-expanded="true" aria-controls="collapse-{{ cine.grouper | replace(' ', '-') }}">
+                            <strong>{{ cine.grouper }}</strong>
+                        </button>
+                    </h2>
+                    <div id="collapse-{{ cine.grouper | replace(' ', '-') }}"
+                         class="accordion-collapse collapse show"
+                         aria-labelledby="heading-{{ cine.grouper | replace(' ', '-') }}"
+                         data-bs-parent="#cinesAccordion">
+                        <div class="accordion-body">
+                            {% for pelicula in cine.list | groupby('nombre_pelicula') %}
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">{{ pelicula.grouper }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sala</th>
+                                                    <th>Hora</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for funcion in pelicula.list %}
+                                                    <tr>
+{#                                                        <td>Sala {{ funcion.numero_sala }}</td>#}
+{#                                                        <td>{{ funcion.hora_funcion | format_time }}</td>#}
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if fecha %}
+            <div class="alert alert-info text-center">
+                No hay funciones programadas para {{ fecha }}.
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

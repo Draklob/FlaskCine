@@ -439,6 +439,6 @@ def eliminar_pelicula(id_pelicula):
 
     return redirect(url_for('admin.mostrar_peliculas'))
 
-@admin_bp.route('/admin/funciones')
-def funciones():
+@admin_bp.route('/funciones')
+def mostrar_funciones():
     return render_template('admin/funciones.html')
