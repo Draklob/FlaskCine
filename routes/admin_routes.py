@@ -1,29 +1,38 @@
 import pymysql
 from flask import render_template, redirect, url_for, flash, request
 from . import admin_bp  # Blueprint creado en __init__.py
-from datetime import datetime
+from datetime import datetime, date
 from flask_caching import Cache
 from crear_datos_cine import conectar_base_datos_cine
 
 
 cache = Cache()
 
-def conectar_base_datos_con_SQL(sql, argumentos= None):
-    conexion = conectar_base_datos_cine()
-    cursor = conexion.cursor(pymysql.cursors.DictCursor)
+def ejecutar_consulta_sql(sql, argumentos= None, fetch= True):
+    conexion = None
+    cursor = None
 
     try:
+        conexion = conectar_base_datos_cine()
+        cursor = conexion.cursor(pymysql.cursors.DictCursor)
+
         if argumentos is None:
             cursor.execute(sql)
         else:
             cursor.execute(sql, argumentos)
 
-        data = cursor.fetchall()
-        return data
+        # Manejar el resultado
+        if fetch:
+            data = cursor.fetchall()
+            return data
+        else:
+            conexion.commit()
+            return cursor.rowcount # Numero de filas afectadas
 
     except pymysql.Error as e:
         print(f"Error en la consulta: {e}")
         return None
+
     finally:
         if cursor:
             cursor.close()
@@ -89,7 +98,7 @@ def eliminar_registro(tabla, id: int):
     pass
 
 def get_cines():
-    cines = conectar_base_datos_con_SQL('SELECT c.nombre AS nombre, COUNT(s.id_sala) AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine GROUP BY c.id_cine, c.nombre LIMIT 15')
+    cines = ejecutar_consulta_sql('SELECT c.nombre AS nombre, COUNT(s.id_sala) AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine GROUP BY c.id_cine, c.nombre LIMIT 15')
     return cines
 
 def get_peliculas():
@@ -98,7 +107,7 @@ def get_peliculas():
         FROM peliculas p LEFT JOIN funciones f ON p.id_pelicula = f.id_pelicula
         GROUP BY p.titulo, p.año ORDER BY p.año, p.titulo
     """
-    pelis = conectar_base_datos_con_SQL(sql)
+    pelis = ejecutar_consulta_sql(sql)
     return pelis
 
 def get_funciones():
@@ -117,7 +126,7 @@ def get_funciones():
         ORDER BY
             c.nombre, MIN(f.fecha_hora), p.titulo, p.año;
     """
-    funciones = conectar_base_datos_con_SQL(sql)
+    funciones = ejecutar_consulta_sql(sql)
 
     for funcion in funciones:
         horarios = funcion.pop('horarios').split(';')
@@ -167,7 +176,7 @@ def obtener_pelicula(pelicula_id):
     sql = """
             SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas WHERE id_pelicula = %s
             """
-    peli = conectar_base_datos_con_SQL(sql, (pelicula_id,))[0]
+    peli = ejecutar_consulta_sql(sql, (pelicula_id,))[0]
 
     print(peli)
     return peli
@@ -197,7 +206,7 @@ def cines():
     ORDER BY
         c.id_cine;
     """
-    cines = conectar_base_datos_con_SQL(sql)
+    cines = ejecutar_consulta_sql(sql)
 
     return render_template('admin/cines.html', cines = cines)
 
@@ -325,7 +334,7 @@ def eliminar_cine(cine_id):
 @admin_bp.route('/peliculas')
 def mostrar_peliculas():
     query = "SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas"
-    peliculas = conectar_base_datos_con_SQL(query)
+    peliculas = ejecutar_consulta_sql(query)
 
     return render_template('admin/peliculas.html', peliculas = peliculas)
 
@@ -439,6 +448,37 @@ def eliminar_pelicula(id_pelicula):
 
     return redirect(url_for('admin.mostrar_peliculas'))
 
-@admin_bp.route('/funciones')
+@admin_bp.route('/funciones', methods=['GET','POST'])
 def mostrar_funciones():
-    return render_template('admin/funciones.html')
+    fecha = None
+    if request.method == 'GET':
+        # Deberiamos mostrar siempre las funciones cogiendo la fecha actual cuando abrimos por primera vez las funciones
+        hoy = date.today()
+        # En este caso vamos a fakeear el dia directamente para coger las funciones de un dia especifico
+        fecha = '2025-04-14'
+    if request.method == 'POST':
+        fecha_str = request.form.get('fecha')
+        fecha = fecha_str
+
+    sql = """
+    SELECT
+    c.id_cine,
+    c.nombre AS nombre_cine,
+    p.id_pelicula,
+    p.titulo AS nombre_pelicula,
+    s.numero,
+    TIME_FORMAT(f.fecha_hora, '%%H:%%i') AS hora_funcion
+FROM
+    cines c
+    LEFT JOIN salas s ON c.id_cine = s.id_cine
+    LEFT JOIN funciones f ON s.id_sala = f.id_sala
+    LEFT JOIN peliculas p ON f.id_pelicula = p.id_pelicula
+WHERE
+    DATE(f.fecha_hora) = %s
+ORDER BY
+    c.nombre, s.numero, hora_funcion;
+    """
+
+    funciones = ejecutar_consulta_sql(sql, (fecha,))
+    print(funciones)
+    return render_template('admin/funciones.html', funciones = funciones, fecha = fecha)

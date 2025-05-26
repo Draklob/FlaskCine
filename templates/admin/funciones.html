@@ -12,8 +12,8 @@
         <div class="card-body">
             <form method="POST" class="row g-3">
                 <div class="col-md-6">
-                    <label for="fecha" class="form-label">Seleccionar Fecha</label>
-                    <input type="date" id="fecha" name="fecha" class="form-control" value="{{ fecha | default('', true) }}" required>
+                    <label for="fecha" class="form-label">Seleccionar otra fecha</label>
+                    <input type="date" id="fecha" name="fecha" class="form-control" value="{{ fecha | format_date }}" required>
                 </div>
                 <div class="col-md-6 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">Buscar Funciones</button>
@@ -35,10 +35,10 @@
     {% endwith %}
 
     <!-- Resultados -->
-    {% if resultados %}
-        <h2 class="mb-4">Funciones para {{ fecha }}</h2>
+    {% if funciones %}
+        <h2 class="mb-4">Funciones para {{ fecha | format_date }}</h2>
         <div class="accordion" id="cinesAccordion">
-            {% for cine in resultados | groupby('nombre_cine') %}
+            {% for cine in funciones | groupby('nombre_cine') %}
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="heading-{{ cine.grouper | replace(' ', '-') }}">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -68,8 +68,8 @@
                                             <tbody>
                                                 {% for funcion in pelicula.list %}
                                                     <tr>
-{#                                                        <td>Sala {{ funcion.numero_sala }}</td>#}
-{#                                                        <td>{{ funcion.hora_funcion | format_time }}</td>#}
+                                                        <td>{{ funcion.numero }}</td>
+                                                        <td>{{ funcion.hora_funcion | format_time }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -90,4 +90,5 @@
         {% endif %}
     {% endif %}
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

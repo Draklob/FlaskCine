@@ -4,6 +4,7 @@ from flask_cors import CORS
 from crear_datos_cine import crear_base_datos, listar_base_datos, crear_tablas, conectar_base_datos_cine
 from agregar_datos_cine import agregar_datos_cine
 from routes.admin_routes import admin_bp
+from datetime import datetime
 
 def iniciar_base_datos():
     print("\n=== Iniciando configuración de la base de datos ===")
@@ -15,6 +16,25 @@ def iniciar_base_datos():
 app = Flask(__name__)
 app.secret_key = '716f1373b77d0ac5498ee3d9ad8888875b1df7ffe57afc362b915bd'
 CORS(app)
+
+# Filtro para formatear hora
+def format_time(time_str):
+    try:
+        return datetime.strptime(time_str, '%H:%M:%S').strftime('%I:%M %p')
+    except ValueError:
+        return time_str
+
+def format_date(date_value):
+    if not date_value:
+        return ""
+
+    fecha = datetime.strptime(date_value, '%Y-%m-%d').date()
+    print(f"Fecha {fecha}")
+    meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    day = fecha.day
+    month = meses[fecha.month -1]
+    print(f"{day}, {month}")
+    return f"{day} de {month}"
 
 @app.route("/api/info_peli/<int:id_pelicula>")
 def info_peli(id_pelicula):
@@ -91,6 +111,8 @@ def serve_index():
     return render_template('index.html')
 
 app.register_blueprint(admin_bp)
+app.jinja_env.filters['format_time'] = format_time
+app.jinja_env.filters['format_date'] = format_date
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
