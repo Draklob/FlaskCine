@@ -10,15 +10,22 @@
     <!-- Formulario para seleccionar la fecha -->
     <div class="card mb-5">
         <div class="card-body">
-            <form method="POST" class="row g-3">
+            <div class="row g-3 justify-content-center">
                 <div class="col-md-6">
-                    <label for="fecha" class="form-label">Seleccionar otra fecha</label>
-                    <input type="date" id="fecha" name="fecha" class="form-control" value="{{ fecha | format_date }}" required>
+                    <div class="d-flex flex-column gap-3">
+                        <form method="POST" id="buscar-form">
+                            <div class="mb-3">
+                                <label for="fecha" class="form-label">Seleccionar otra fecha</label>
+                                <input type="date" id="fecha" name="fecha" class="form-control" value="{{ fecha | default('', true) }}" required>
+                            </div>
+                        </form>
+                        <div class="d-flex gap-3 align-items-center">
+                            <button type="submit" form="buscar-form" name="action" value="buscar" class="btn btn-primary flex-fill text-center" aria-label="Buscar funciones por fecha">Buscar Funciones</button>
+                            <a href="{{ url_for('admin.agregar_funcion', fecha=fecha | default('', true)) }}" id="agregar-btn" class="btn btn-primary flex-fill text-center" aria-label="Agregar nueva función">Agregar función</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary">Buscar Funciones</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 

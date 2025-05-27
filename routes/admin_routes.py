@@ -457,8 +457,10 @@ def mostrar_funciones():
         # En este caso vamos a fakeear el dia directamente para coger las funciones de un dia especifico
         fecha = '2025-04-14'
     if request.method == 'POST':
-        fecha_str = request.form.get('fecha')
-        fecha = fecha_str
+        action = request.form.get('action')
+        if action == 'buscar':
+            fecha_str = request.form.get('fecha')
+            fecha = fecha_str
 
     sql = """
     SELECT
@@ -482,3 +484,6 @@ ORDER BY
     funciones = ejecutar_consulta_sql(sql, (fecha,))
     print(funciones)
     return render_template('admin/funciones.html', funciones = funciones, fecha = fecha)
+
+@admin_bp.route('/funciones/nueva_funcion')
+def agregar_funcion():
