@@ -48,6 +48,12 @@
                             <input type="text" class="form-control" id="clasificacion" name="clasificacion" value="{{ pelicula.clasificacion }}" required>
                         </div>
 
+                        <!-- Poster -->
+                        <div class="mb-3">
+                            <label for="poster" class="form-label">Poster</label>
+                            <input type="text" class="form-control" id="poster" name="poster" value="{{ pelicula.poster }}">
+                        </div>
+
                         <!-- Botones -->
                         <div class="d-flex justify-content-between">
                             <a href="{{ url_for('admin.mostrar_peliculas') }}" class="btn btn-secondary">Cancelar</a>

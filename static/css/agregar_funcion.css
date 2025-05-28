@@ -1,0 +1,72 @@
+/* Indicador de pasos */
+#step-indicator {
+    position: relative;
+    padding: 0 2rem;
+}
+
+#step-indicator:before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50px;
+    right: 50px;
+    height: 2px;
+    background-color: #dee2e6;
+    z-index: 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.step.active .step-number {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.step.active .step-label {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.step.completed .step-number {
+    background-color: #198754;
+    color: white;
+}
+
+.step.completed .step-label {
+    color: #198754;
+}
+
+/* Contenido de los pasos */
+.step-content {
+    padding: 1.5rem 0;
+}
+
+/* Botones de navegación */
+.btn-prev, .btn-next {
+    min-width: 120px;
+}

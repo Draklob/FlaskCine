@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Añadir Nueva Funcion</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0"><i class="fas fa-plus-circle me-2"></i>Nueva Funcion</h3>
+                </div>
+                <div class="card-body">
+                    <div id="step-indicator" class="d-flex justify-content-between mb-4">
+                        <div class="step" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Cine</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Sala</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Película</span>
+                        </div>
+                        <div class="step" data-step="4">
+                            <span class="step-number">4</span>
+                            <span class="step-label">Fecha/Hora</span>
+                        </div>
+                    </div>
+                    <form id="funcion-form">
+                        <!-- Paso 1: Selección de cine -->
+                        <div id="step1" class="step-content">
+                            <div class="mb-3">
+                                <label for="cine" class="form-label">Seleccione un cine:</label>
+                                <select id="cine" class="form-select" required>
+                                    <option value="" selected disabled>Cargando cines...</option>
+                                </select>
+                            </div>
+                            <button type="button" id="btn-step1" class="btn btn-primary float-end" disabled>
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+
+                        <!-- Paso 2: Selección de sala -->
+                        <div id="step2" class="step-content d-none">
+                            <div class="mb-3">
+                                <label for="sala" class="form-label">Seleccione una sala:</label>
+                                <select id="sala" class="form-select" disabled required>
+                                    <option value="" selected disabled>Primero seleccione un cine</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary btn-prev">
+                                    <i class="fas fa-arrow-left me-2"></i> Anterior
+                                </button>
+                                <button type="button" id="btn-step2" class="btn btn-primary" disabled>
+                                    Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Paso 3: Selección de película -->
+                        <div id="step3" class="step-content d-none">
+                            <div class="mb-3">
+                                <label for="pelicula" class="form-label">Seleccione una película:</label>
+                                <select id="pelicula" class="form-select" disabled required>
+                                    <option value="" selected disabled>Cargando películas...</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary btn-prev">
+                                    <i class="fas fa-arrow-left me-2"></i> Anterior
+                                </button>
+                                <button type="button" id="btn-step3" class="btn btn-primary" disabled>
+                                    Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Paso 4: Selección de fecha y hora -->
+                        <div id="step4" class="step-content d-none">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="fecha" class="form-label">Fecha:</label>
+                                    <input type="date" id="fecha" class="form-control" disabled required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="hora" class="form-label">Hora:</label>
+                                    <input type="time" id="hora" class="form-control" disabled required>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary btn-prev">
+                                    <i class="fas fa-arrow-left me-2"></i> Anterior
+                                </button>
+                                <button type="submit" id="btn-submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i> Guardar Función
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/agregar_funcion.js') }}"></script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/agregar_funcion.css') }}">
+{% endblock %}

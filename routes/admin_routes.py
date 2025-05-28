@@ -1,5 +1,5 @@
 import pymysql
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from . import admin_bp  # Blueprint creado en __init__.py
 from datetime import datetime, date
 from flask_caching import Cache
@@ -174,7 +174,7 @@ def obtener_cine_por_id(cine_id):
 def obtener_pelicula(pelicula_id):
     # Buscamos la peli
     sql = """
-            SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas WHERE id_pelicula = %s
+            SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion, poster_url AS poster FROM peliculas WHERE id_pelicula = %s
             """
     peli = ejecutar_consulta_sql(sql, (pelicula_id,))[0]
 
@@ -184,6 +184,34 @@ def obtener_pelicula(pelicula_id):
 @admin_bp.route('/dashboard')
 def dashboard():
     return render_template('admin/dashboard.html', cines= get_cines(), pelis= get_peliculas(), funciones= get_funciones(), now = datetime.now())
+
+@admin_bp.route('/get_cines')
+def get_cines():
+    try:
+        conexion = conectar_base_datos_cine()
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT id_cine AS id, nombre FROM cines")
+            cines = cursor.fetchall()
+            print(cines)
+        return jsonify(cines)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    finally:
+        conexion.close()
+
+@admin_bp.route('/get_salas/<int:cine_id>')
+def get_salas(cine_id):
+    try:
+        conexion = conectar_base_datos_cine()
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT s.numero AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine WHERE c.id_cine= 1")
+            salas = cursor.fetchall()
+            print(salas)
+        return jsonify(salas)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    finally:
+        conexion.close()
 
 @admin_bp.route('/cines')
 def cines():
@@ -351,6 +379,7 @@ def nueva_pelicula():
         genero = request.form['genero']
         director = request.form['director']
         clasificacion = request.form['clasificacion']
+        poster = request.form['poster']
 
         # Validaciones
         if not titulo or not año or not duracion or not genero or not director or not clasificacion:
@@ -358,6 +387,11 @@ def nueva_pelicula():
             return redirect(url_for('peliculas.nueva_pelicula'))
 
         datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero, 'director': director, 'clasificacion': clasificacion}
+        # En caso de que se poste una url, la metemos en la base de datos
+        # Aqui habria que hacer una comprobación de si es una url antes de mandar los datos
+        if poster:
+            datos_pelicula['poster'] = poster
+
         insertar_registro("peliculas", datos_pelicula)
 
         flash('Pelicula agregada exitosamente', 'success')
@@ -384,6 +418,7 @@ def editar_pelicula(id_pelicula):
         genero = request.form['genero']
         director = request.form['director']
         clasificacion = request.form['clasificacion']
+        poster = request.form['poster']
 
         peli = obtener_pelicula(id_pelicula)
 
@@ -402,6 +437,8 @@ def editar_pelicula(id_pelicula):
             datos_pelicula['director'] = director
         if clasificacion != peli['clasificacion']:
             datos_pelicula['clasificacion'] = clasificacion
+        if poster != peli['poster']:
+            datos_pelicula['poster'] = poster
 
         if datos_pelicula:
             datos_pelicula['id_pelicula'] = peli['id_pelicula']
@@ -485,5 +522,13 @@ ORDER BY
     print(funciones)
     return render_template('admin/funciones.html', funciones = funciones, fecha = fecha)
 
-@admin_bp.route('/funciones/nueva_funcion')
+@admin_bp.route('/funciones/nueva_funcion', methods=['GET','POST'])
 def agregar_funcion():
+    if request.method == 'GET':
+        cines = get_cines()
+        peliculas = get_peliculas()
+
+    if request.method == 'POST':
+        pelicula_id = request.form['id_pelicula']
+
+    return render_template('admin/form_funcion.html')

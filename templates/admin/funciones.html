@@ -21,7 +21,7 @@
                         </form>
                         <div class="d-flex gap-3 align-items-center">
                             <button type="submit" form="buscar-form" name="action" value="buscar" class="btn btn-primary flex-fill text-center" aria-label="Buscar funciones por fecha">Buscar Funciones</button>
-                            <a href="{{ url_for('admin.agregar_funcion', fecha=fecha | default('', true)) }}" id="agregar-btn" class="btn btn-primary flex-fill text-center" aria-label="Agregar nueva función">Agregar función</a>
+                            <a href="{{ url_for('admin.agregar_funcion') }}" id="agregar-btn" class="btn btn-primary flex-fill text-center" aria-label="Agregar nueva función">Agregar función</a>
                         </div>
                     </div>
                 </div>
