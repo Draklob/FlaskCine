@@ -15,6 +15,8 @@
             <div class="cines-lista-cabecera align-content-center">
                 <h2 class="titulos">Cines</h2>
                 <button id="mostrar-admin" class="btn-admin" onclick="window.location.href='{{ url_for('admin.dashboard') }}'">Administrador</button>
+                <input type="date" id="fecha_pelis">
+
             </div>
             <nav class="nav-contenedor">
                 <div class="cines-lista-contenedor">
@@ -53,7 +55,11 @@
             peliculas: [],
             selectedPelicula: null,
             infoPelicula: null,
+            fecha: '2025-04-14',
         };
+
+        // Event listeners
+        document.getElementById('fecha_pelis').addEventListener('change', cargarPeliculas);
 
         // Controlador para el await cuando usamos fetch
         let controladorFetch;
@@ -95,12 +101,19 @@
 
         // Carga las pelis cuando elegimos el cine
         async function cargarPeliculas() {
-            if(appState.estaCargando) return;
+            const fecha = document.getElementById('fecha_pelis').value;
+            console.log(fecha);
+
+            if(appState.estaCargando && appState.fecha === fecha) return;
 
             try{
                 appState.estaCargando = true;
+                if (fecha !== "" && fecha !== appState.fecha) {
+                    console.log(fecha);
+                    appState.fecha = fecha;
+                }
 
-                const response = await fetch(`/cines/${appState.selectedCine.id_cine}/peliculas`);
+                const response = await fetch(`/cines/${appState.selectedCine.id_cine}/peliculas?fecha=${appState.fecha}`);
                 if (!response.ok) throw new Error('Error al cargar las peliculas');
                 appState.peliculas = await response.json();
                 renderizarPeliculas();

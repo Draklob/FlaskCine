@@ -74,20 +74,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function cargarSalas(cineId) {
-        fetch(`/get_salas/${cineId}`)
+        fetch(`/admin/get_salas_cine?cine_id=${cineId}`)
             .then(response => response.json())
             .then(data => {
                 const salaSelect = document.getElementById('sala');
                 salaSelect.innerHTML = '<option value="" selected disabled>Seleccione una sala</option>';
-                console.log(data)
-                data.forEach(sala => {
-                    const option = document.createElement('option');
-                    option.value = sala.id;
-                    option.textContent = sala.nombre;
-                    salaSelect.appendChild(option);
-                });
 
-                salaSelect.disabled = false;
+                if (data.length === 0) {
+                    salaSelect.innerHTML = '<option value="" selected disabled>No hay salas disponibles</option>';
+                } else {
+                    console.log(data)
+                    data.forEach(sala => {
+                        const option = document.createElement('option');
+                        option.value = sala.id_sala;
+                        option.textContent = sala.nombre_sala;
+                        salaSelect.appendChild(option);
+                    });
+
+                    salaSelect.disabled = false;
+                }
             })
             .catch(error => {
                 console.error('Error al cargar salas:', error);
@@ -108,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validar si necesitamos configurar fecha al pasar al paso 4
         if (next === 4) {
+            console.log("Paso FINAL FECHA HORA")
             const fechaInput = document.getElementById('fecha');
             fechaInput.disabled = false;
 
@@ -134,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function cargarPeliculas() {
-        fetch('/get_peliculas')
+        fetch('/admin/get_peliculas')
             .then(response => response.json())
             .then(data => {
                 const peliculaSelect = document.getElementById('pelicula');
@@ -142,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 data.forEach(pelicula => {
                     const option = document.createElement('option');
-                    option.value = pelicula.id;
+                    option.value = pelicula.id_pelicula;
                     option.textContent = pelicula.titulo;
                     peliculaSelect.appendChild(option);
                 });
@@ -180,8 +186,9 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
 
         const fechaHora = `${selecciones.fecha} ${selecciones.hora}:00`;
+        console.log(fechaHora);
 
-        fetch('/agregar_funcion', {
+        fetch('/admin/funciones/nueva_funcion', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,11 +206,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
+            // Se puede comprobar también usando if(data.success)
             Swal.fire({
                 title: '¡Éxito!',
                 text: 'Función agregada correctamente',
                 icon: 'success',
                 confirmButtonText: 'Aceptar'
+                // Aqui podemos sino llamar a una funcion y que nos rediriga desde aqui a las funciones
+                // window.location.href = '/adimn/mostrar_funciones'
             }).then(() => {
                 // Recargar la página para reiniciar el formulario
                 window.location.reload();

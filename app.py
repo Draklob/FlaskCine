@@ -75,11 +75,11 @@ def get_cines():
         return jsonify({'error': str(error)}), 500
 
 @app.route('/cines/<int:id_cine>/peliculas', methods=['GET'])
-#def get_peliculas(id_cine, fecha):
 def get_peliculas(id_cine):
     try:
         conexion = conectar_base_datos_cine()
         cursor = conexion.cursor( pymysql.cursors.DictCursor )
+        fecha = request.args.get('fecha')
         print("Buscando peliculas")
         cursor.execute('''
             SELECT
@@ -97,7 +97,7 @@ def get_peliculas(id_cine):
                 p.id_pelicula, p.titulo, p.duracion
             ORDER BY 
                 p.id_pelicula, MIN(f.fecha_hora);
-        ''', (id_cine, '2025-04-14'))
+        ''', (id_cine, fecha))
         peliculas = cursor.fetchall()
 
         cursor.close()

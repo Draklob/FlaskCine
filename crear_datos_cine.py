@@ -1,17 +1,18 @@
 import pymysql
 from pymysql import MySQLError, OperationalError
+from DataBaseSetting import DataBaseSettings, db_config
+
+
 
 def crear_base_datos():
     try:
         # Conexion al servidor MySQL
-        print("Creando base datos")
         connection = pymysql.connect(
-            host='localhost',
-            user='root',
-            password='',
-            port=3308,
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
+            host="localhost",
+            user="root",
+            password="",
+            port=3306,
+            charset="utf8mb4",
         )
 
         try:
@@ -21,9 +22,9 @@ def crear_base_datos():
                 result = cursor.fetchone()
                 if result is None:
                     cursor.execute("CREATE DATABASE IF NOT EXISTS cine_db")
-                    print("Base de datos 'cine' creada correctamente.")
+                    print("Creando base datos por primera vez... Base de datos 'cine_db' creada correctamente.")
                 else:
-                    print("Base de datos 'cine' ya existe.")
+                    print("Base de datos 'cine_db' ya existe.")
         finally:
             connection.close()
 
@@ -39,15 +40,17 @@ def crear_base_datos():
         print(f"❌ Error inesperado: {e}")
 
 def conectar_base_datos_cine():
+    # Cogemos la configuracion de la base de datos para conectarse
+    db_settings: DataBaseSettings = db_config
     """Establece conexion con la base de datos cine"""
     try:
         conexion= pymysql.connect(
-            host='localhost',
-            user='root',
-            password='',
-            port=3308,
-            database='cine_db',
-            charset='utf8mb4',
+            host=db_settings.host,
+            user=db_settings.user,
+            password=db_settings.password,
+            port=db_settings.port,
+            database=db_settings.database,
+            charset=db_settings.charset,
             cursorclass=pymysql.cursors.DictCursor
         )
         print("Conexion con base de datos cine fue exitosa.")

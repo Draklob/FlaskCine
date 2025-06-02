@@ -103,7 +103,7 @@ def get_cines():
 
 def get_peliculas():
     sql = """
-    SELECT p.titulo AS titulo, p.año AS año
+    SELECT p.titulo AS titulo, p.año AS año, p.id_pelicula
         FROM peliculas p LEFT JOIN funciones f ON p.id_pelicula = f.id_pelicula
         GROUP BY p.titulo, p.año ORDER BY p.año, p.titulo
     """
@@ -163,6 +163,7 @@ def obtener_cine_por_id(cine_id):
             sql = "SELECT * FROM cines WHERE id_cine = %s"
             cursor.execute(sql, (cine_id,))
             cine = cursor.fetchone() # En este caso devuelve diccionario porque lo tenemos configurado con DictCursor
+            print(cine)
             return cine
     except Exception as e:
         print(f"Error al obtener cine: {e}")
@@ -174,10 +175,9 @@ def obtener_cine_por_id(cine_id):
 def obtener_pelicula(pelicula_id):
     # Buscamos la peli
     sql = """
-            SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion, poster_url AS poster FROM peliculas WHERE id_pelicula = %s
+            SELECT * FROM peliculas WHERE id_pelicula = %s
             """
     peli = ejecutar_consulta_sql(sql, (pelicula_id,))[0]
-
     print(peli)
     return peli
 
@@ -186,32 +186,41 @@ def dashboard():
     return render_template('admin/dashboard.html', cines= get_cines(), pelis= get_peliculas(), funciones= get_funciones(), now = datetime.now())
 
 @admin_bp.route('/get_cines')
-def get_cines():
+def obtener_cines():
     try:
         conexion = conectar_base_datos_cine()
         with conexion.cursor() as cursor:
             cursor.execute("SELECT id_cine AS id, nombre FROM cines")
             cines = cursor.fetchall()
-            print(cines)
+
         return jsonify(cines)
     except Exception as e:
         return jsonify({'error': str(e)})
     finally:
         conexion.close()
 
-@admin_bp.route('/get_salas/<int:cine_id>')
-def get_salas(cine_id):
+@admin_bp.route('/get_salas_cine')
+def obtener_salas_cine():
+    cine_id = request.args.get('cine_id')
+    if not cine_id:
+        return jsonify({'error': 'No se ha seleccionado ninguna cine'})
+
     try:
         conexion = conectar_base_datos_cine()
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT s.numero AS salas FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine WHERE c.id_cine= 1")
+            cursor.execute("SELECT s.id_sala, s.numero AS nombre_sala FROM cines c LEFT JOIN salas s ON c.id_cine = s.id_cine WHERE c.id_cine= %s", (cine_id,))
             salas = cursor.fetchall()
-            print(salas)
+
         return jsonify(salas)
     except Exception as e:
         return jsonify({'error': str(e)})
     finally:
         conexion.close()
+
+@admin_bp.route('/get_peliculas')
+def obtener_peliculas():
+    peliculas = get_peliculas()
+    return jsonify(peliculas)
 
 @admin_bp.route('/cines')
 def cines():
@@ -378,6 +387,8 @@ def nueva_pelicula():
         duracion = request.form['duracion']
         genero = request.form['genero']
         director = request.form['director']
+        actores = request.form['actores']
+        sinopsis = request.form['sinopsis']
         clasificacion = request.form['clasificacion']
         poster = request.form['poster']
 
@@ -386,11 +397,14 @@ def nueva_pelicula():
             flash('Todos los campos son obligatorios', 'danger')
             return redirect(url_for('peliculas.nueva_pelicula'))
 
-        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero, 'director': director, 'clasificacion': clasificacion}
+        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero,'director': director, 'sinopsis': sinopsis, 'clasificacion': clasificacion}
         # En caso de que se poste una url, la metemos en la base de datos
-        # Aqui habria que hacer una comprobación de si es una url antes de mandar los datos
+
+        # Comprobamos que los campos opcionales si estan con informacion, los incluimos
+        if actores:
+            datos_pelicula['actores'] = actores
         if poster:
-            datos_pelicula['poster'] = poster
+            datos_pelicula['poster_url'] = poster
 
         insertar_registro("peliculas", datos_pelicula)
 
@@ -404,7 +418,6 @@ def nueva_pelicula():
 def editar_pelicula(id_pelicula):
     peli = None
     if request.method == 'GET':
-
         peli = obtener_pelicula(id_pelicula)
 
         if peli is None:
@@ -417,6 +430,8 @@ def editar_pelicula(id_pelicula):
         duracion = int(request.form['duracion'])
         genero = request.form['genero']
         director = request.form['director']
+        actores = request.form['actores']
+        sinopsis = request.form['sinopsis']
         clasificacion = request.form['clasificacion']
         poster = request.form['poster']
 
@@ -435,10 +450,14 @@ def editar_pelicula(id_pelicula):
             datos_pelicula['genero'] = genero
         if director != peli['director']:
             datos_pelicula['director'] = director
+        if actores != peli['actores']:
+            datos_pelicula['actores'] = actores
+        if sinopsis != peli['sinopsis']:
+            datos_pelicula['sinopsis'] = sinopsis
         if clasificacion != peli['clasificacion']:
             datos_pelicula['clasificacion'] = clasificacion
-        if poster != peli['poster']:
-            datos_pelicula['poster'] = poster
+        if poster != peli['poster_url']:
+            datos_pelicula['poster_url'] = poster
 
         if datos_pelicula:
             datos_pelicula['id_pelicula'] = peli['id_pelicula']
@@ -527,8 +546,35 @@ def agregar_funcion():
     if request.method == 'GET':
         cines = get_cines()
         peliculas = get_peliculas()
+        salas_cine = obtener_salas_cine()
+
+        return render_template('admin/form_funcion.html', cines=cines, peliculas=peliculas, salas=salas_cine)
 
     if request.method == 'POST':
-        pelicula_id = request.form['id_pelicula']
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "No se enviaron datos"}), 400
 
-    return render_template('admin/form_funcion.html')
+            pelicula_id = data.get('pelicula_id')
+            sala_id = data.get('sala_id')
+            fecha_hora = data.get('fecha_hora')
+
+            # Validar datos
+            if not all([pelicula_id, sala_id, fecha_hora]):
+                return jsonify({"success": False, "error": "Faltan campos requeridos"}), 400
+
+            print(f"pelicula_id: {pelicula_id}, sala_id: {sala_id}, fecha_hora: {fecha_hora}")
+
+            # Insertar la nueva función en la base de datos
+            query = """
+                INSERT IGNORE INTO funciones (id_pelicula, id_sala, fecha_hora)
+                VALUES (%s, %s, %s)
+            """
+            result = ejecutar_consulta_sql(query, (pelicula_id, sala_id, fecha_hora))
+            if result is None:
+                return jsonify({"success": False, "error": "Error al guardar la función"}), 500
+
+            return jsonify({"success": True, "message": "Función agregada exitosamente"}), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": f"Error en el servidor: {str(e)}"}), 500

@@ -42,6 +42,18 @@
                             <input type="text" class="form-control" id="director" name="director" value="{{ pelicula.director }}" required>
                         </div>
 
+                        <!-- Actores -->
+                        <div class="mb-3">
+                            <label for="actores" class="form-label">Actores</label>
+                            <input type="text" class="form-control" id="actores" name="actores" value="{{ pelicula.actores }}">
+                        </div>
+
+                        <!-- Sinopsis -->
+                        <div class="mb-3">
+                            <label for="sinopsis" class="form-label">Sinopsis <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="sinopsis" name="sinopsis" placeholder="{{ pelicula.sinopsis }}" required rows="5"></textarea>
+                        </div>
+
                          <!-- Clasificacion -->
                         <div class="mb-3">
                             <label for="clasificacion" class="form-label">Clasificación <span class="text-danger">*</span></label>
@@ -51,7 +63,7 @@
                         <!-- Poster -->
                         <div class="mb-3">
                             <label for="poster" class="form-label">Poster</label>
-                            <input type="text" class="form-control" id="poster" name="poster" value="{{ pelicula.poster }}">
+                            <input type="text" class="form-control" id="poster" name="poster" value="{{ pelicula.poster_url }}">
                         </div>
 
                         <!-- Botones -->
