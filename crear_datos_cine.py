@@ -85,7 +85,16 @@ def crear_tablas():
         # SCRIPT SQL COMPLETO
         # Si ya existen las tablas, no las vuelve a crear, simplemente da el salto a la siguiente secuencia SQL
         script_sql = """
-            -- Crea la tabla PELICULAS
+            SET FOREIGN_KEY_CHECKS = 1;
+            
+            CREATE TABLE IF NOT EXISTS cines(
+            id_cine INT AUTO_INCREMENT PRIMARY KEY,
+            nombre VARCHAR(100) NOT NULL,
+            direccion VARCHAR(250) NOT NULL,
+            telefono VARCHAR(20) NOT NULL,
+            precio_base DECIMAL (3,2) NOT NULL
+            ) ENGINE=InnoDB;
+            
             CREATE TABLE IF NOT EXISTS peliculas(
             id_pelicula INT AUTO_INCREMENT PRIMARY KEY,
             titulo VARCHAR(100) UNIQUE NOT NULL,
@@ -98,17 +107,7 @@ def crear_tablas():
             clasificacion VARCHAR(10) NOT NULL,
             poster_url VARCHAR(250)
             );
-            
-            -- Crea la tabla CINE
-            CREATE TABLE IF NOT EXISTS cines(
-            id_cine INT AUTO_INCREMENT PRIMARY KEY,
-            nombre VARCHAR(100) NOT NULL,
-            direccion VARCHAR(250) NOT NULL,
-            telefono VARCHAR(20) NOT NULL,
-            precio_base DECIMAL (3,2) NOT NULL
-            );
 
-            -- Crea la tabla SALAS
             CREATE TABLE IF NOT EXISTS salas(
             id_sala INT AUTO_INCREMENT PRIMARY KEY,
             numero VARCHAR(50) NOT NULL,
@@ -117,76 +116,69 @@ def crear_tablas():
             FOREIGN KEY (id_cine) REFERENCES cines (id_cine) ON DELETE CASCADE 
             );
             
-            -- Crea la tabla FUNCIONES
             CREATE TABLE IF NOT EXISTS funciones(
             id_funcion INT AUTO_INCREMENT PRIMARY KEY,
-            id_pelicula INT,
-            id_sala INT,
+            id_pelicula INT NOT NULL,
+            id_sala INT NOT NULL,
             fecha_hora DATETIME NOT NULL,
             FOREIGN KEY (id_pelicula) REFERENCES peliculas (id_pelicula) ON DELETE CASCADE ,
             FOREIGN KEY (id_sala) REFERENCES salas (id_sala) ON DELETE CASCADE 
             );
-            
-            -- Crea la tabla Usuarios
-            CREATE TABLE IF NOT EXISTS usuarios(
-            id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-            nombre VARCHAR(100) NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(100) NOT NULL,
-            telefono VARCHAR(20) DEFAULT NULL,
-            fecha_nacimiento DATETIME DEFAULT NULL,
-            es_estudiante BOOLEAN DEFAULT FALSE
-            );
-            
-            -- Crea la tabla Reservas
-            CREATE TABLE IF NOT EXISTS reservas(
-            id_reserva INT AUTO_INCREMENT PRIMARY KEY,
-            id_usuario INT,
-            id_funcion INT,
-            cantidad_entradas INT NOT NULL,
-            fecha_hora DATETIME NOT NULL,
-            pago_total DECIMAL (4,2) NOT NULL,
-            FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE ,
-            FOREIGN KEY (id_funcion) REFERENCES funciones (id_funcion) ON DELETE CASCADE
-            );
-            
-            -- Crea la tabla Asientos
-            CREATE TABLE IF NOT EXISTS asientos(
-            id_asiento INT AUTO_INCREMENT PRIMARY KEY,
-            id_sala INT,
-            num_asiento VARCHAR(10) NOT NULL,
-            disponible BOOLEAN NOT NULL
-            );
-            
-            -- Crea la tabla ReservarAsiento
-            CREATE TABLE IF NOT EXISTS reservarasiento(
-            id_reserva INT,
-            id_asiento INT,
-            FOREIGN KEY (id_reserva) REFERENCES reservas (id_reserva) ON DELETE CASCADE ,
-            FOREIGN KEY (id_asiento) REFERENCES asientos (id_asiento) ON DELETE CASCADE
-            );
-            
-            -- Crea la tabla descuentos
-            CREATE TABLE IF NOT EXISTS descuentos(
-            id_descuento INT AUTO_INCREMENT PRIMARY KEY,
-            nombre VARCHAR(70) NOT NULL,
-            edad_minima INT DEFAULT NULL,
-            edad_maxima INT DEFAULT NULL,
-            requiere_estudiante BOOLEAN DEFAULT FALSE
-            );
-            
-            -- Crea la tabla descuentos_cine
-            CREATE TABLE IF NOT EXISTS descuentos_cine(
-            id_descuento_cine INT AUTO_INCREMENT PRIMARY KEY,
-            id_cine INT,
-            id_descuento INT,
-            porcentaje DECIMAL(3,3) NOT NULL, -- 0.30 para un 30% de descuento
-            dia_semana INT CHECK (dia_semana BETWEEN 1 AND 7 OR dia_semana IS NULL),
-            FOREIGN KEY (id_cine) REFERENCES cines (id_cine) ON DELETE CASCADE ,
-            FOREIGN KEY (id_descuento) REFERENCES descuentos (id_descuento) ON DELETE CASCADE 
-            );
             """
         # TERMINA LA CREACION DE LAS TABLAS
+
+        # CREATE TABLE IF NOT EXISTS usuarios(
+        # id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+        # nombre VARCHAR(100) NOT NULL,
+        # email VARCHAR(100) UNIQUE NOT NULL,
+        # password VARCHAR(100) NOT NULL,
+        # telefono VARCHAR(20) DEFAULT NULL,
+        # fecha_nacimiento DATETIME DEFAULT NULL,
+        # es_estudiante BOOLEAN DEFAULT FALSE
+        # );
+
+        # CREATE TABLE IF NOT EXISTS reservas(
+        # id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+        # id_usuario INT,
+        # id_funcion INT,
+        # cantidad_entradas INT NOT NULL,
+        # fecha_hora DATETIME NOT NULL,
+        # pago_total DECIMAL (4,2) NOT NULL,
+        # FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE ,
+        # FOREIGN KEY (id_funcion) REFERENCES funciones (id_funcion) ON DELETE CASCADE
+        # );
+
+        # CREATE TABLE IF NOT EXISTS asientos(
+        # id_asiento INT AUTO_INCREMENT PRIMARY KEY,
+        # id_sala INT,
+        # num_asiento VARCHAR(10) NOT NULL,
+        # disponible BOOLEAN NOT NULL
+        # );
+
+        # CREATE TABLE IF NOT EXISTS reservarasiento(
+        # id_reserva INT,
+        # id_asiento INT,
+        # FOREIGN KEY (id_reserva) REFERENCES reservas (id_reserva) ON DELETE CASCADE ,
+        # FOREIGN KEY (id_asiento) REFERENCES asientos (id_asiento) ON DELETE CASCADE
+        # );
+
+        # CREATE TABLE IF NOT EXISTS descuentos(
+        # id_descuento INT AUTO_INCREMENT PRIMARY KEY,
+        # nombre VARCHAR(70) NOT NULL,
+        # edad_minima INT DEFAULT NULL,
+        # edad_maxima INT DEFAULT NULL,
+        # requiere_estudiante BOOLEAN DEFAULT FALSE
+        # );
+
+        # CREATE TABLE IF NOT EXISTS descuentos_cine(
+        # id_descuento_cine INT AUTO_INCREMENT PRIMARY KEY,
+        # id_cine INT,
+        # id_descuento INT,
+        # porcentaje DECIMAL(3,3) NOT NULL, -- 0.30 para un 30% de descuento
+        # dia_semana INT CHECK (dia_semana BETWEEN 1 AND 7 OR dia_semana IS NULL),
+        # FOREIGN KEY (id_cine) REFERENCES cines (id_cine) ON DELETE CASCADE ,
+        # FOREIGN KEY (id_descuento) REFERENCES descuentos (id_descuento) ON DELETE CASCADE
+        # );
 
         # Ejecutamos el script separando cada sentencia
         for sentencia in script_sql.split(';'):

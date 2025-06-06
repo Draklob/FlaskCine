@@ -10,7 +10,7 @@
                     <h3 class="h5 mb-0"><i class="fas fa-plus-circle me-2"></i>Nueva Película</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.nueva_pelicula') }}">
+                    <form method="POST" action="{{ url_for('admin.nueva_pelicula') }}" enctype="multipart/form-data">
 
                         <!-- Nombre de la Pelicula -->
                         <div class="mb-3">
@@ -51,7 +51,7 @@
                         <!-- Sinopsis -->
                         <div class="mb-3">
                             <label for="sinopsis" class="form-label">Sinopsis <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="sinopsis" name="sinopsis" placeholder="Descripcion de la pelicula..." required>
+                            <textarea class="form-control" id="sinopsis" name="sinopsis" placeholder="Descripcion de la pelicula..." required rows="5"></textarea>
                         </div>
 
                          <!-- Clasificacion -->
@@ -63,7 +63,13 @@
                         <!-- Poster -->
                         <div class="mb-3">
                             <label for="poster" class="form-label">Poster</label>
-                            <input type="text" class="form-control" id="poster" name="poster" placeholder="url">
+                            <input type="text" class="form-control" id="poster" name="poster" placeholder="https://example.com/poster.jpg">
+                        </div>
+
+                        <!-- Poster (Archivo) -->
+                        <div class="mb-3">
+                            <label for="poster_file" class="form-label">Subir Póster (.jpg o .png)</label>
+                            <input type="file" class="form-control" id="poster_file" name="poster_file" accept=".jpg,.png">
                         </div>
 
                         <!-- Botones -->

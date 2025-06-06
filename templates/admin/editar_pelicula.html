@@ -51,7 +51,7 @@
                         <!-- Sinopsis -->
                         <div class="mb-3">
                             <label for="sinopsis" class="form-label">Sinopsis <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="sinopsis" name="sinopsis" placeholder="{{ pelicula.sinopsis }}" required rows="5"></textarea>
+                            <textarea class="form-control" id="sinopsis" name="sinopsis" required rows="5">{{ pelicula.sinopsis }}</textarea>
                         </div>
 
                          <!-- Clasificacion -->
@@ -64,6 +64,12 @@
                         <div class="mb-3">
                             <label for="poster" class="form-label">Poster</label>
                             <input type="text" class="form-control" id="poster" name="poster" value="{{ pelicula.poster_url }}">
+                        </div>
+
+                        <!-- Poster (Archivo) -->
+                        <div class="mb-3">
+                            <label for="poster_file" class="form-label">Subir Póster (.jpg o .png)</label>
+                            <input type="file" class="form-control" id="poster_file" name="poster_file" accept=".jpg,.png">
                         </div>
 
                         <!-- Botones -->

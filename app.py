@@ -1,9 +1,9 @@
+import os
 import pymysql
 from flask import Flask, jsonify, render_template, request, url_for, redirect, Blueprint
 from flask_cors import CORS
 from crear_datos_cine import crear_base_datos, listar_base_datos, crear_tablas, conectar_base_datos_cine
 from agregar_datos_cine import agregar_datos_cine
-from routes.admin_routes import admin_bp
 from datetime import datetime
 
 def iniciar_base_datos():
@@ -14,7 +14,7 @@ def iniciar_base_datos():
     #listar_base_datos()
 
 app = Flask(__name__)
-app.secret_key = '716f1373b77d0ac5498ee3d9ad8888875b1df7ffe57afc362b915bd'
+# app.secret_key = '716f1373b77d0ac5498ee3d9ad8888875b1df7ffe57afc362b915bd'
 CORS(app)
 
 # Filtro para formatear hora
@@ -110,9 +110,19 @@ def get_peliculas(id_cine):
 def serve_index():
     return render_template('index.html')
 
+from routes.admin_routes import admin_bp
 app.register_blueprint(admin_bp)
+
+app.config['SECRET_KEY'] = '716f1373b77d0ac5498ee3d9ad8888875b1df7ffe57afc362b915bd'
+app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads', 'posters')
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 # Limitado a 5 MB
+# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
 app.jinja_env.filters['format_time'] = format_time
 app.jinja_env.filters['format_date'] = format_date
+
+# Crear carpeta de uploads si no existe
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

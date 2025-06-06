@@ -1,12 +1,21 @@
+import traceback
+
 import pymysql
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request, jsonify, current_app, make_response
+import os, time
+from fpdf import FPDF
+
+from utils import validate_url
 from . import admin_bp  # Blueprint creado en __init__.py
 from datetime import datetime, date
 from flask_caching import Cache
 from crear_datos_cine import conectar_base_datos_cine
 
-
 cache = Cache()
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+def archivo_permitido(archivo):
+    return '.' in archivo and archivo.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def ejecutar_consulta_sql(sql, argumentos= None, fetch= True):
     conexion = None
@@ -43,9 +52,17 @@ def insertar_registro(tabla, datos: dict):
     conexion = None
     cursor = None
     try:
+        if not datos:
+            raise ValueError("El diccionario de registro no tiene datos.")
         conexion = conectar_base_datos_cine()
         cursor = conexion.cursor()
 
+        # Comprobamos que existe la tabla primero
+        cursor.execute("SHOW TABLES LIKE %s", (tabla,) )
+        if not cursor.fetchone():
+            raise ValueError(f"La tabla {tabla} no existe en la base de datos.")
+
+        # Continuamos y preparamos el sql para lanzarse.
         # Deberia comprobar que existe la tabla primero o asi saber que el fallo empieza por ahi.
         columnas = ', '.join(datos.keys())
         placeholders = ', '.join(['%s'] * len(datos))
@@ -54,10 +71,23 @@ def insertar_registro(tabla, datos: dict):
         query = f"INSERT INTO {tabla} ({columnas}) VALUES ({placeholders})"
         cursor.execute(query, tuple(datos.values()))
         conexion.commit()
-        return cursor.lastrowid
+
+        if cursor.rowcount == 1:
+            return cursor.lastrowid
+        else:
+            print("❌ No se insertó ninguna fila")
+            return None
+
+    except pymysql.Error as err:
+        print(f"Error de MySQL: {err}")
+        if conexion:
+            conexion.rollback()
+        return None
 
     except Exception as e:
         print(f"Error: {e}")
+        if conexion:
+            conexion.rollback()
         return None
 
     finally:
@@ -222,6 +252,42 @@ def obtener_peliculas():
     peliculas = get_peliculas()
     return jsonify(peliculas)
 
+@admin_bp.route('/filtrar_peliculas_por_genero')
+def filtrar_peliculas_por_genero():
+    sql = """
+            SELECT DISTINCT genero FROM peliculas
+        """
+    generos_a_filtrar = ejecutar_consulta_sql(sql)
+    generos = set()
+    for genero in generos_a_filtrar:
+        generos_tmp = genero['genero'].replace(' ', '').split(',')
+        for gen in generos_tmp:
+            generos.add(gen)
+
+    generos_list = list(generos)
+
+    return jsonify(generos_list)
+
+@admin_bp.route('/filtrar_peliculas', methods=['GET'])
+def filtrar_peliculas():
+    try:
+        genero = request.args.get('genero', '')
+
+        if genero:
+            sql = """
+                SELECT * FROM peliculas WHERE genero LIKE %s
+            """
+            genero_param = f"%{genero}%"
+            peliculas = ejecutar_consulta_sql(sql, genero_param)
+            print(peliculas)
+            return jsonify(peliculas)
+            # return render_template('admin/peliculas.html', peliculas = peliculas)
+        else:
+            return redirect(url_for('admin.mostrar_peliculas'))
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @admin_bp.route('/cines')
 def cines():
     # Lógica para obtener cines de la base de datos
@@ -370,7 +436,7 @@ def eliminar_cine(cine_id):
 # Rutas similares para películas y funciones
 @admin_bp.route('/peliculas')
 def mostrar_peliculas():
-    query = "SELECT id_pelicula, titulo, año, duracion, genero, director, clasificacion FROM peliculas"
+    query = "SELECT * FROM peliculas"
     peliculas = ejecutar_consulta_sql(query)
 
     return render_template('admin/peliculas.html', peliculas = peliculas)
@@ -390,22 +456,54 @@ def nueva_pelicula():
         actores = request.form['actores']
         sinopsis = request.form['sinopsis']
         clasificacion = request.form['clasificacion']
-        poster = request.form['poster']
+        poster = request.form.get('poster', None)
+        poster_file = request.files.get('poster_file', '')
+
+        # Comprobamos primero que no estan ambos campos rellenados, solo se necesita uno de ellos
+        if poster and poster_file and poster_file.filename:
+            flash("Por favor, proporciona solo una URL o una imagen.", "danger")
+            return render_template('admin/form_peliculas.html')
+
+        # Si elige URL, comprobamos que es valida.
+        if poster:
+            if not validate_url(poster):
+                flash("URL no valida", "danger")
+                return render_template('admin/form_peliculas.html')
+#       Procedemos a procesar el archivo, si es la opcion elegida
+        if poster_file and poster_file.filename:
+            if not archivo_permitido(poster_file.filename):
+                flash("Solo se permiten archivos .jpg, .png o .jpeg", "danger")
+                return render_template('admin/form_peliculas.html')
+            # Generar nombre unico
+            ext = poster_file.filename.rsplit('.', 1)[1].lower()
+            # {titulo.lower().replace(' ', '_')}_{int(time.time())}.{ext}
+            unique_filename = f"pelicula_{titulo.lower().replace(' ', '_')}.{ext}"
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            try:
+                poster_file.save(file_path)
+                poster = f"uploads/posters/{unique_filename}"
+                poster= url_for('static', filename=poster)
+            except Exception as e:
+                flash(f"Error al guardar el archivo: {e}", "danger")
+                return render_template('admin/form_peliculas.html')
 
         # Validaciones
-        if not titulo or not año or not duracion or not genero or not director or not clasificacion:
+        if not all([titulo, año, duracion, genero, director, clasificacion, sinopsis]):
             flash('Todos los campos son obligatorios', 'danger')
             return redirect(url_for('peliculas.nueva_pelicula'))
 
-        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero,'director': director, 'sinopsis': sinopsis, 'clasificacion': clasificacion}
-        # En caso de que se poste una url, la metemos en la base de datos
+        datos_pelicula = {'titulo': titulo, 'año': año, 'duracion': duracion, 'genero': genero,
+                          'director': director, 'sinopsis': sinopsis, 'clasificacion': clasificacion}
 
         # Comprobamos que los campos opcionales si estan con informacion, los incluimos
         if actores:
             datos_pelicula['actores'] = actores
+
+        # En caso de que tengamos URL, la metemos en la base de datos
         if poster:
             datos_pelicula['poster_url'] = poster
 
+        print(datos_pelicula)
         insertar_registro("peliculas", datos_pelicula)
 
         flash('Pelicula agregada exitosamente', 'success')
@@ -434,10 +532,43 @@ def editar_pelicula(id_pelicula):
         sinopsis = request.form['sinopsis']
         clasificacion = request.form['clasificacion']
         poster = request.form['poster']
+        poster_file = request.form['poster_file']
 
         peli = obtener_pelicula(id_pelicula)
 
-        print(f"Web:{type(duracion)} y base datos:{type(peli['duracion'])}")
+        # Comprobamos primero que no estan ambos campos rellenados, solo se necesita uno de ellos
+        if poster and poster_file and poster_file.filename:
+            flash("Por favor, proporciona solo una URL o una imagen.", "danger")
+            return render_template('admin/form_peliculas.html')
+
+        # Si elige URL, comprobamos que es valida.
+        if poster:
+            if not validate_url(poster):
+                flash("URL no valida", "danger")
+                return render_template('admin/form_peliculas.html')
+        #       Procedemos a procesar el archivo, si es la opcion elegida
+        if poster_file and poster_file.filename:
+            if not archivo_permitido(poster_file.filename):
+                flash("Solo se permiten archivos .jpg, .png o .jpeg", "danger")
+                return render_template('admin/form_peliculas.html')
+            # Generar nombre unico
+            ext = poster_file.filename.rsplit('.', 1)[1].lower()
+            # {titulo.lower().replace(' ', '_')}_{int(time.time())}.{ext}
+            unique_filename = f"pelicula_{titulo.lower().replace(' ', '_')}.{ext}"
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            try:
+                poster_file.save(file_path)
+                poster = f"uploads/posters/{unique_filename}"
+                poster = url_for('static', filename=poster)
+            except Exception as e:
+                flash(f"Error al guardar el archivo: {e}", "danger")
+                return render_template('admin/form_peliculas.html')
+
+        # Validaciones
+        if not all([titulo, año, duracion, genero, director, clasificacion, sinopsis]):
+            flash('Todos los campos son obligatorios', 'danger')
+            return redirect(url_for('peliculas.nueva_pelicula'))
+
         datos_pelicula = {}
         # Comprobamos que cada dato se guarde, si es diferente al existente
         if titulo != peli['titulo']:
@@ -571,10 +702,112 @@ def agregar_funcion():
                 INSERT IGNORE INTO funciones (id_pelicula, id_sala, fecha_hora)
                 VALUES (%s, %s, %s)
             """
-            result = ejecutar_consulta_sql(query, (pelicula_id, sala_id, fecha_hora))
+            result = ejecutar_consulta_sql(query, (pelicula_id, sala_id, fecha_hora), False)
             if result is None:
                 return jsonify({"success": False, "error": "Error al guardar la función"}), 500
 
             return jsonify({"success": True, "message": "Función agregada exitosamente"}), 200
         except Exception as e:
             return jsonify({"success": False, "error": f"Error en el servidor: {str(e)}"}), 500
+
+@admin_bp.route('/generar_report_pdf', methods=['POST'])
+def generar_report_pdf():
+    try:
+        # Obtener los datos para exportar segun lo que decida el administrador
+        data = request.get_json()
+        fecha_inicio = data.get('fechaInicio')#
+        fecha_final = data.get('fechaFin')
+
+        # Tu lógica de generación del PDF aquí...
+        print(f"Fechas recibidas: {fecha_inicio} - {fecha_final}")
+
+        sql = """
+        SELECT
+            c.nombre AS nombre_cine,
+            p.titulo AS nombre_pelicula,
+            s.numero,
+            TIME_FORMAT(f.fecha_hora, '%%H:%%i') AS hora_funcion
+        FROM
+            cines c
+            LEFT JOIN salas s ON c.id_cine = s.id_cine
+            LEFT JOIN funciones f ON s.id_sala = f.id_sala
+            LEFT JOIN peliculas p ON f.id_pelicula = p.id_pelicula
+        WHERE
+            DATE(f.fecha_hora) BETWEEN %s AND %s
+        ORDER BY
+            c.nombre, s.numero, hora_funcion;
+        """
+        datos = ejecutar_consulta_sql( sql, (fecha_inicio, fecha_final))
+        print(datos)
+        # Generamos el PDF
+        pdf = FPDF()
+        pdf.add_page()
+
+        pdf.set_font("Arial", style="", size=16)
+
+        # Título principal
+        pdf.cell(200, 10, "Reporte de Cartelera", ln=1, align='C')
+        pdf.set_font("Arial", size=12)
+        pdf.cell(200, 10, f"Del {fecha_inicio} al {fecha_final}", ln=1, align='C')
+        pdf.ln(10)
+
+        # Agrupar datos por cine
+        cines = {}
+        for row in datos:
+            cine = row['nombre_cine'] or "Sin cine"  # Manejo de valores nulos
+            if cine not in cines:
+                cines[cine] = {}
+            sala = f"Sala {row['numero']}" if row['numero'] else "Sin sala"
+            if sala not in cines[cine]:
+                cines[cine][sala] = []
+            cines[cine][sala].append({
+                'pelicula': row['nombre_pelicula'] or "Sin película",
+                'hora': row['hora_funcion'] or "Sin hora"
+            })
+
+        # Generar contenido del PDF
+        pdf.set_font("Arial", size=12)
+        for cine, salas in cines.items():
+            pdf.set_fill_color(200, 220, 255)
+            pdf.cell(200, 10, cine, ln=1, fill=True)
+            pdf.ln(5)
+
+            for sala, funciones in salas.items():
+                pdf.set_font("Arial", 'B', 12)
+                pdf.cell(200, 8, sala, ln=1)
+                pdf.set_font("Arial", size=10)
+
+                for funcion in funciones:
+                    pelicula = funcion['pelicula']
+                    hora = funcion['hora']
+                    pdf.cell(100, 6, f"- {pelicula}", ln=0)
+                    pdf.cell(30, 6, hora, ln=1)
+                pdf.ln(5)
+
+        # # Generar y devolver el PDF
+        pdf_bytes = pdf.output(dest='S').encode('latin1')
+        # pdf_output = pdf.output(dest='S')  # Generar PDF como string
+        response = make_response(pdf_bytes)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = (
+            f'attachment; filename=cartelera_{fecha_inicio}_a_{fecha_final}.pdf'
+        )
+        return response
+
+
+        # return jsonify({
+        #     "status": "success",
+        #     "message": "PDF generado correctamente",
+        #     "fechas": {"inicio": fecha_inicio, "fin": fecha_final}
+        # }), 200
+
+
+    except Exception as e:
+        # Imprimir traza completa para depuración
+        print(f"Error en generar_report_pdf: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({"status": "error", "message": f"Error al generar el PDF: {str(e)}"}), 500
+
+@admin_bp.route('/cerrar_sesion')
+def cerrar_sesion():
+    return redirect(url_for('serve_index'))

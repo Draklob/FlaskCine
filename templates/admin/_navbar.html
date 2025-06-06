@@ -35,11 +35,181 @@
 
                 <!-- Más items del menú -->
             </ul>
+            <div class="d-flex mx-3">
+                <button onclick="mostrarGenerarPDF()" class="btn btn-outline-light btn-sm">
+                    <i class="fa-solid fa-file-pdf"></i> Generar PDF
+                </button>
+            </div>
             <div class="d-flex">
-                <button class="btn btn-outline-light btn-sm">
+                <button onclick="cerrarSesionClick()" class="btn btn-outline-light btn-sm">
                     <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
                 </button>
             </div>
         </div>
     </div>
 </nav>
+
+<script>
+function mostrarGenerarPDF() {
+    // Mostrar SweetAlert2 con el select
+    Swal.fire({
+        title: 'Selecciona fechas (Opcional)',
+        html:
+            `<div class="text-left">
+              <p>Rango de fechas a consultar:</p>
+              <input type="date" id="fecha_inicio" class="swal2-input" placeholder="Fecha inicial">
+              <input type="date" id="fecha_fin" class="swal2-input" placeholder="Fecha final">
+
+              <div id="toggle-container" style="display: none; margin-top: 15px;">
+                <label class="switch">
+                  <input type="checkbox" id="rango_mensual">
+                  <span class="slider round"></span>
+                </label>
+                <span id="toggle-label" style="margin-left: 10px;">Semanal</span>
+              </div>
+
+              <p class="text-muted small mt-2">
+                • Sin fechas: Hoy hasta domingo<br>
+                • Solo inicio: <span id="range-hint">Hasta fin de semana</span><br>
+                • Ambas fechas: Rango exacto
+              </p>
+            </div>`,
+        showCancelButton: true,
+        confirmButtonText: 'Generar PDF',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        didOpen: () => {
+            // Mostrar/ocultar el toggle según selección de fechas
+            const fechaInicio = document.getElementById('fecha_inicio');
+            const fechaFin = document.getElementById('fecha_fin');
+            const toggleContainer = document.getElementById('toggle-container');
+
+            const updateUI = () => {
+              if (fechaInicio.value && !fechaFin.value) {
+                toggleContainer.style.display = 'block';
+              } else {
+                toggleContainer.style.display = 'none';
+              }
+            };
+
+            fechaInicio.addEventListener('change', updateUI);
+            fechaFin.addEventListener('change', updateUI);
+
+            // Cambiar texto del toggle
+            document.getElementById('rango_mensual').addEventListener('change', function() {
+            document.getElementById('toggle-label').textContent = this.checked ? 'Mensual' : 'Semanal';
+            document.getElementById('range-hint').textContent = this.checked ? 'Hasta fin de mes' : 'Hasta fin de semana';
+            });
+        },
+        preConfirm: () => {
+            const fechaInicio = document.getElementById('fecha_inicio').value;
+            const fechaFinal = document.getElementById('fecha_fin').value;
+            const esMensual = document.getElementById('rango_mensual').checked;
+
+            // Logica para determinar el rango de fechas
+            let inicio, fin;
+
+            // Caso 1: No se selecciona nada, se coge el dia de hoy hasta fin de la semana.
+            if( !fechaInicio && !fechaFinal ) {
+                inicio = new Date();
+
+                // Calcular domingo de esta semana
+                const domingo = new Date(inicio);
+                domingo.setDate( inicio.getDate() + (7 - inicio.getDay()) ); // 7 es domingo
+                fin = domingo;
+            }
+            // Caso 2. Si elige fecha inicial, escoge si quiere reporte semanal o mensual
+            else if( fechaInicio && !fechaFinal ) {
+                inicio = new Date(fechaInicio);
+
+                if( esMensual ) {
+                    // Calculamos fin de mes
+                    fin = new Date( inicio.getFullYear(), inicio.getMonth() +1, 0 );
+                }
+                else {
+                    const domingo = new Date(inicio);
+                    domingo.setDate( inicio.getDate() + (7 - inicio.getDay()) ); // 7 es domingo
+                    fin = domingo;
+                }
+            }
+            else{
+                inicio = new Date(fechaInicio);
+                fin = new Date(fechaFinal);
+            }
+            // Caso 3
+
+            // Validamos que la fecha final no es anterior a la inicial
+            if( fin < inicio ) {
+                Swal.showValidationMessage('La fecha final no puede ser anterior a la inicial', 'error');
+                return false;
+            }
+
+            // Formatear fechas para mostrar al usuario
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+            const mensaje = `Rango seleccionado: ${inicio.toLocaleDateString('es-ES', opciones)} - ${fin.toLocaleDateString('es-ES', opciones)}`;
+
+            // Devolver el objeto con las fechas
+            return {
+              fechaInicio: inicio.toISOString().split('T')[0],
+              fechaFin: fin.toISOString().split('T')[0],
+              mensaje: mensaje
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log('Fechas seleccionadas:', result.value);
+            fetch('{{ url_for('admin.generar_report_pdf') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fechaInicio: result.value.fechaInicio,
+                    fechaFin: result.value.fechaFin,
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Error desconocido'); });
+                }
+                return response.blob();  // Para el PDF
+            })
+            .then(blob => {
+                // Crear enlace para descargar el PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cartelera_${result.value.fechaInicio}_a_${result.value.fechaFin}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+                Swal.fire({
+                    title: 'PDF generado',
+                    text: 'El reporte se ha descargado correctamente',
+                    icon: 'success'
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'No se pudo generar el PDF',
+                    icon: 'error'
+                });
+            });
+        }
+    });
+}
+
+function cerrarSesionClick() {
+        fetch('{{ url_for('admin.cerrar_sesion') }}')
+            .then( response => {
+                {#if ( response.status === 200 ) {#}
+                if (response.redirected) {
+                    window.location.href = response.url;
+            }
+            })
+    }
+</script>

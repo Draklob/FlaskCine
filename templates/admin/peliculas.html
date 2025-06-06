@@ -7,6 +7,9 @@
     <h2 class="fw-bold text-primary">
         <i class="fas fa-building me-2"></i>Gestión de Peliculas
     </h2>
+    <button onclick="mostrarFiltrarPeliculas()" class="btn btn-primary">
+        <i class="fas fa-filter me-2"></i> Filtrar
+    </button>
     <a href="{{ url_for('admin.formulario_pelicula') }}" class="btn btn-primary">
         <i class="fas fa-plus me-1"></i> Nueva Película
     </a>
@@ -27,7 +30,7 @@
                         <th>Clasificación</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="peliculas-tbody">
                     {% for peli in peliculas %}
                     <tr>
                         <td>{{ peli.id_pelicula }}</td>
@@ -60,5 +63,101 @@
 </div>
 <script>
     const filmIconUrl = "{{ url_for('static', filename='images/film.png') }}";
+
+    function mostrarFiltrarPeliculas() {
+        fetch('/admin/filtrar_peliculas_por_genero')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar géneros');
+                }
+                return response.json();
+            })
+            .then(generos => {
+                const select = document.createElement('select');
+                select.id = 'generoSelect';
+                select.className = 'swal2-select';
+                select.innerHTML = '<option value="" selected disabled>Seleccione un género</option>'
+                + generos.map(genero => `<option value="${genero}">${genero}</option>`).join('');
+
+                // Mostrar SweetAlert2 con el select
+                Swal.fire({
+                    title: 'Selecciona un género',
+                    html: select,
+                    showCancelButton: true,
+                    confirmButtonText: 'Filtrar',
+                    cancelButtonText: 'Cancelar',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const generoSeleccionado = document.getElementById('generoSelect').value;
+                        if (!generoSeleccionado) {
+                            Swal.showValidationMessage('Por favor, selecciona un género');
+                        }
+                        return generoSeleccionado;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const generoSeleccionado = result.value;
+                        filtrarPeliculas(generoSeleccionado);
+                    }
+                });
+            }).catch(error => {
+                console.error('Error al cargar filtros:', error);
+                document.getElementById('cine').innerHTML = '<option value="" selected disabled>Error al cargar filtros</option>';
+            });
+    }
+
+    // Función para filtrar películas con fetch
+    async function filtrarPeliculas(genero) {
+        try {
+            // Hacer solicitud fetch a la ruta del backend
+            const response = await fetch(`/admin/filtrar_peliculas?genero=${encodeURIComponent(genero)}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            const peliculas = await response.json();
+            console.log('Películas recibidas:', peliculas);
+
+            // Mostrar resultados
+            const peliculasTbody = document.getElementById('peliculas-tbody');
+            peliculasTbody.innerHTML = peliculas.length > 0 ?
+                peliculas.map(p => `
+                    <tr>
+                        <td>${ p.id_pelicula }</td>
+                        <td>${ p.titulo }</td>
+                        <td>${ p.año }</td>
+                        <td>${ p.duracion } min</td>
+                        <td>${ p.genero }</td>
+                        <td>${ p.director }</td>
+                        <td>${ p.clasificacion }</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="/admin/peliculas/editar/${p.id_pelicula}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form id="delete-form-${p.id_pelicula}"
+                                      action="/admin/peliculas/eliminar/${p.id_pelicula}" method="POST">
+                                    <button type="submit" class="btn btn-sm btn.outline-danger delete-btn-peliculas" data-pelicula-id="${p.id_pelicula}"
+                                        data-pelicula-titulo="${p.titulo}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('') : '<tr><td colspan="8">No se encontraron películas</td></tr>';
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron cargar las películas: ' + error.message
+            });
+        }
+    }
+
 </script>
 {% endblock %}

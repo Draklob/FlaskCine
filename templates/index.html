@@ -271,7 +271,9 @@
                 new URL(url);
                 return true;
             }
-            catch (_){ return false; }
+            catch (_){
+                return /^[a-zA-Z0-9\/._-]+$/.test(url);
+            }
         }
 
         // Funcion para escapar HTML (Seguridad) para prevenir XSS
